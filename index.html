@@ -252,6 +252,7 @@ let empresas = [];
 let funcionarios = [];
 let currentTab = 'alertas';
 let filtroEmpresaId = '';
+let buscaFuncionario = '';
 
 function syncBadge(state){
   const d = document.getElementById('syncDot');
@@ -346,7 +347,9 @@ function atualizarBadgeAlertas(){
   const criticos = funcionarios.filter(f=>{
     const d1 = diasAte(f.ferias_vencimento);
     const d2 = f.salario_familia ? diasAte(f.salario_familia_cessa) : null;
-    return (d1!==null && d1<=45) || (d2!==null && d2<=45);
+    const alertaFerias = d1!==null && d1<=45 && !f.ferias_revisado;
+    const alertaSF = d2!==null && d2<=45 && !f.salario_familia_revisado;
+    return alertaFerias || alertaSF;
   }).length;
   const badge = document.getElementById('alertCount');
   if(criticos>0){ badge.style.display='inline-block'; badge.textContent = criticos; }
@@ -357,53 +360,76 @@ function atualizarBadgeAlertas(){
 function renderAlertas(){
   const alertasFerias = funcionarios
     .map(f=>({f, dias: diasAte(f.ferias_vencimento), tipo:'ferias'}))
-    .filter(x=>x.dias!==null && x.dias<=45)
+    .filter(x=>x.dias!==null && x.dias<=45 && !x.f.ferias_revisado)
     .sort((a,b)=>a.dias-b.dias);
 
   const alertasSF = funcionarios
     .filter(f=>f.salario_familia && f.salario_familia_cessa)
     .map(f=>({f, dias: diasAte(f.salario_familia_cessa), tipo:'sf'}))
-    .filter(x=>x.dias!==null && x.dias<=45)
+    .filter(x=>x.dias!==null && x.dias<=45 && !x.f.salario_familia_revisado)
     .sort((a,b)=>a.dias-b.dias);
+
+  const revisadosFerias = funcionarios.filter(f=>{
+    const d = diasAte(f.ferias_vencimento);
+    return d!==null && d<=45 && f.ferias_revisado;
+  });
+  const revisadosSF = funcionarios.filter(f=>{
+    const d = f.salario_familia ? diasAte(f.salario_familia_cessa) : null;
+    return d!==null && d<=45 && f.salario_familia_revisado;
+  });
 
   const totalFolha = funcionarios.reduce((s,f)=>s+(parseFloat(f.salario)||0),0);
   const comSF = funcionarios.filter(f=>f.salario_familia).length;
 
-  function itemHtml(x, label, icon){
+  function itemHtml(x, label, icon, tipo, revisado){
     const dias = x.dias;
-    const cor = dias<0 ? 'red' : (dias<=15 ? 'red':'yellow');
+    const cor = revisado ? 'gray' : (dias<0 ? 'red' : (dias<=15 ? 'red':'yellow'));
     const texto = dias<0 ? `Vencida há ${Math.abs(dias)} dia(s)` : `Vence em ${dias} dia(s)`;
+    const acao = revisado
+      ? `<button class="btn btn-ghost btn-sm" onclick="marcarRevisado('${x.f.id}','${tipo}',false)"><i class="ti ti-arrow-back-up"></i> Desmarcar</button>`
+      : `<button class="btn btn-ghost btn-sm" onclick="marcarRevisado('${x.f.id}','${tipo}',true)"><i class="ti ti-check"></i> Marcar como revisado</button>`;
     return `
-      <div class="alert-item ${cor}">
+      <div class="alert-item ${revisado ? '' : cor}">
         <div>
           <div class="name"><i class="ti ${icon}"></i> ${x.f.nome}</div>
           <div class="meta">${empresaNome(x.f.empresa_id)} &middot; ${label}</div>
         </div>
-        <span class="pill pill-${cor}">${texto}</span>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="pill pill-${cor}">${texto}</span>
+          ${acao}
+        </div>
       </div>`;
   }
 
   const listaFerias = alertasFerias.length
-    ? alertasFerias.map(x=>itemHtml(x,'Vencimento de férias','ti-beach')).join('')
-    : `<div class="empty-state">Nenhuma férias vencendo nos próximos 45 dias.</div>`;
+    ? alertasFerias.map(x=>itemHtml(x,'Vencimento de férias','ti-beach','ferias',false)).join('')
+    : `<div class="empty-state">Nenhuma férias pendente de revisão nos próximos 45 dias.</div>`;
 
   const listaSF = alertasSF.length
-    ? alertasSF.map(x=>itemHtml(x,'Cessação do salário família','ti-heart-handshake')).join('')
-    : `<div class="empty-state">Nenhum salário família cessando nos próximos 45 dias.</div>`;
+    ? alertasSF.map(x=>itemHtml(x,'Cessação do salário família','ti-heart-handshake','sf',false)).join('')
+    : `<div class="empty-state">Nenhum salário família pendente de revisão nos próximos 45 dias.</div>`;
+
+  const listaRevisados = (revisadosFerias.length + revisadosSF.length) ? `
+    <div class="panel">
+      <h2><i class="ti ti-checklist"></i> Já revisados</h2>
+      <div class="desc">Itens que você já marcou como lançados no programa contábil.</div>
+      ${revisadosFerias.map(f=>itemHtml({f, dias: diasAte(f.ferias_vencimento)}, 'Vencimento de férias','ti-beach','ferias',true)).join('')}
+      ${revisadosSF.map(f=>itemHtml({f, dias: diasAte(f.salario_familia_cessa)}, 'Cessação do salário família','ti-heart-handshake','sf',true)).join('')}
+    </div>` : '';
 
   return `
     <div class="kpi-grid">
       <div class="kpi"><div class="num">${empresas.length}</div><div class="lbl">Empresas cadastradas</div></div>
       <div class="kpi"><div class="num">${funcionarios.length}</div><div class="lbl">Funcionários</div></div>
-      <div class="kpi hl-yellow"><div class="num">${alertasFerias.length}</div><div class="lbl">Férias próximas do vencimento</div></div>
-      <div class="kpi hl-red"><div class="num">${alertasSF.length}</div><div class="lbl">Salário família a cessar</div></div>
+      <div class="kpi hl-yellow"><div class="num">${alertasFerias.length}</div><div class="lbl">Férias a revisar</div></div>
+      <div class="kpi hl-red"><div class="num">${alertasSF.length}</div><div class="lbl">Salário família a revisar</div></div>
       <div class="kpi"><div class="num">${comSF}</div><div class="lbl">Recebem salário família</div></div>
       <div class="kpi"><div class="num">R$ ${totalFolha.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div><div class="lbl">Total da folha</div></div>
     </div>
 
     <div class="panel">
       <h2><i class="ti ti-beach"></i> Férias próximas do vencimento</h2>
-      <div class="desc">Alerta automático para férias que vencem em até 45 dias, ou já vencidas.</div>
+      <div class="desc">Alerta automático para férias que vencem em até 45 dias, ou já vencidas. Marque como revisado depois de lançar no seu programa contábil.</div>
       ${listaFerias}
     </div>
 
@@ -412,7 +438,19 @@ function renderAlertas(){
       <div class="desc">Funcionários cujo benefício de salário família vai cessar em até 45 dias.</div>
       ${listaSF}
     </div>
+
+    ${listaRevisados}
   `;
+}
+
+async function marcarRevisado(funcId, tipo, valor){
+  const campo = tipo === 'ferias' ? 'ferias_revisado' : 'salario_familia_revisado';
+  syncBadge('loading');
+  try{
+    await apiPut('funcionarios', {id: funcId, [campo]: valor});
+    toast(valor ? 'Marcado como revisado!' : 'Marcação removida');
+    await loadData();
+  }catch(e){ syncBadge('err'); toast('Erro ao atualizar', false); }
 }
 
 /* ---------------- Tab: Empresas ---------------- */
@@ -486,11 +524,16 @@ async function excluirEmpresa(id, nome){
 }
 
 /* ---------------- Tab: Funcionários ---------------- */
-function renderFuncionarios(){
-  const opcoesEmpresa = empresas.map(e=>`<option value="${e.id}" ${filtroEmpresaId===e.id?'selected':''}>${e.nome}</option>`).join('');
-  const lista = funcionarios.filter(f=> !filtroEmpresaId || f.empresa_id===filtroEmpresaId);
+function listaFuncionariosFiltrada(){
+  const termo = buscaFuncionario.trim().toLowerCase();
+  return funcionarios.filter(f=>
+    (!filtroEmpresaId || f.empresa_id===filtroEmpresaId) &&
+    (!termo || (f.nome||'').toLowerCase().includes(termo))
+  );
+}
 
-  const linhas = lista.length ? lista.map(f=>{
+function gerarLinhasFuncionarios(lista){
+  return lista.length ? lista.map(f=>{
     const diasF = diasAte(f.ferias_vencimento);
     const stF = statusFerias(diasF);
     const sfInfo = f.salario_familia
@@ -508,7 +551,18 @@ function renderFuncionarios(){
         <button class="btn btn-danger btn-sm" onclick="excluirFuncionario('${f.id}','${(f.nome||'').replace(/'/g,"")}')"><i class="ti ti-trash"></i></button>
       </td>
     </tr>`;
-  }).join('') : `<tr><td colspan="6" class="empty-state">Nenhum funcionário cadastrado.</td></tr>`;
+  }).join('') : `<tr><td colspan="6" class="empty-state">Nenhum funcionário encontrado.</td></tr>`;
+}
+
+function atualizarTabelaFuncionarios(){
+  const tbody = document.getElementById('funcTbody');
+  if(!tbody) return;
+  tbody.innerHTML = gerarLinhasFuncionarios(listaFuncionariosFiltrada());
+}
+
+function renderFuncionarios(){
+  const opcoesEmpresa = empresas.map(e=>`<option value="${e.id}" ${filtroEmpresaId===e.id?'selected':''}>${e.nome}</option>`).join('');
+  const linhas = gerarLinhasFuncionarios(listaFuncionariosFiltrada());
 
   return `
     <div class="panel">
@@ -520,9 +574,13 @@ function renderFuncionarios(){
         <button class="btn btn-vinho" onclick="abrirModalFuncionario()"><i class="ti ti-plus"></i> Novo funcionário</button>
       </div>
       <div class="row-flex" style="margin-bottom:14px;">
+        <div class="field" style="max-width:280px;">
+          <label>Buscar por nome</label>
+          <input id="buscaFuncionarioInput" type="text" value="${buscaFuncionario}" placeholder="Digite o nome do funcionário" oninput="buscaFuncionario=this.value; atualizarTabelaFuncionarios();" />
+        </div>
         <div class="field" style="max-width:260px;">
           <label>Filtrar por empresa</label>
-          <select id="empresaFiltro" onchange="filtroEmpresaId=this.value; render();">
+          <select id="empresaFiltro" onchange="filtroEmpresaId=this.value; atualizarTabelaFuncionarios();">
             <option value="">Todas as empresas</option>
             ${opcoesEmpresa}
           </select>
@@ -530,7 +588,7 @@ function renderFuncionarios(){
       </div>
       <table>
         <thead><tr><th>Funcionário</th><th>Salário</th><th>Salário família</th><th>Vencimento férias</th><th>Status</th><th>Ações</th></tr></thead>
-        <tbody>${linhas}</tbody>
+        <tbody id="funcTbody">${linhas}</tbody>
       </table>
     </div>
   `;
@@ -611,6 +669,15 @@ async function salvarFuncionario(id){
   if(!empresa_id){ toast('Selecione a empresa', false); return; }
 
   const payload = { empresa_id, nome, salario, ferias_vencimento, salario_familia, salario_familia_valor, salario_familia_cessa, obs };
+
+  // se a data de vencimento mudou, tira a marcação de "revisado" para o alerta voltar a aparecer
+  if(id){
+    const antigo = funcionarios.find(x=>x.id===id);
+    if(antigo){
+      if(antigo.ferias_vencimento !== ferias_vencimento) payload.ferias_revisado = false;
+      if(antigo.salario_familia_cessa !== salario_familia_cessa) payload.salario_familia_revisado = false;
+    }
+  }
 
   syncBadge('loading');
   try{
