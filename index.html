@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Contabilidade Daymar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+  :root{
+    --vinho: #5a0a1a;
+    --vinho-escuro: #3d0712;
+    --dourado: #c9a84c;
+    --dourado-claro: #e2c98a;
+    --creme: #f6efe2;
+    --creme-card: #fffdf8;
+    --texto: #2c1810;
+    --texto-suave: #6b5544;
+    --linha: #e4d8c0;
+    --verde: #4c7a52;
+    --vermelho: #a13d3d;
+    --sombra: 0 4px 18px rgba(90,10,26,0.09);
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    font-family:'Lora', Georgia, serif;
+    background: var(--creme);
+    color: var(--texto);
+    min-height:100vh;
+  }
+  .sans{ font-family:'Inter', -apple-system, sans-serif; }
+  a{ color:inherit; }
+
+  /* ---------- Login ---------- */
+  #login-screen{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: radial-gradient(circle at 30% 20%, var(--vinho) 0%, var(--vinho-escuro) 65%);
+    padding:20px;
+  }
+  .login-card{
+    background: var(--creme-card);
+    border-radius:16px;
+    padding:44px 38px;
+    width:100%;
+    max-width:380px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    text-align:center;
+    border-top:4px solid var(--dourado);
+  }
+  .brand-mark{
+    width:64px;height:64px;border-radius:50%;
+    background:linear-gradient(135deg, var(--vinho), var(--vinho-escuro));
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 18px;
+    border:2px solid var(--dourado);
+  }
+  .brand-mark i{ font-size:28px; color:var(--dourado-claro); }
+  .login-card h1{ font-size:22px; margin:0 0 4px; letter-spacing:.3px; }
+  .login-card .sub{ font-family:'Inter',sans-serif; font-size:13px; color:var(--texto-suave); margin-bottom:26px; }
+  .login-card input{
+    width:100%; padding:13px 14px; border-radius:9px; border:1.5px solid var(--linha);
+    font-family:'Inter',sans-serif; font-size:14.5px; margin-bottom:14px; background:#fff; color:var(--texto);
+  }
+  .login-card input:focus{ outline:none; border-color:var(--vinho); }
+  .btn-primary{
+    width:100%; padding:13px; border:none; border-radius:9px; cursor:pointer;
+    background:linear-gradient(135deg, var(--vinho), var(--vinho-escuro));
+    color:var(--dourado-claro); font-family:'Inter',sans-serif; font-weight:600; font-size:14.5px;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary:hover{ transform:translateY(-1px); box-shadow:0 8px 20px rgba(90,10,26,.3); }
+  .login-error{ color:var(--vermelho); font-family:'Inter',sans-serif; font-size:13px; margin-top:10px; min-height:16px; }
+
+  /* ---------- App shell ---------- */
+  #app{ display:none; min-height:100vh; }
+  .topbar{
+    background:linear-gradient(135deg, var(--vinho), var(--vinho-escuro));
+    color:var(--creme);
+    padding:16px 26px;
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:12px;
+    border-bottom:3px solid var(--dourado);
+    position:sticky; top:0; z-index:20;
+  }
+  .topbar .brand{ display:flex; align-items:center; gap:12px; }
+  .topbar .brand .ico{
+    width:38px;height:38px;border-radius:9px;background:rgba(255,255,255,.08);
+    display:flex;align-items:center;justify-content:center; border:1px solid var(--dourado);
+  }
+  .topbar .brand .ico i{ color:var(--dourado-claro); font-size:19px; }
+  .topbar h1{ font-size:17px; margin:0; letter-spacing:.4px; }
+  .topbar .brand .tagline{ font-family:'Inter',sans-serif; font-size:11px; color:var(--dourado-claro); opacity:.85; }
+  .nav-tabs{ display:flex; gap:6px; font-family:'Inter',sans-serif; }
+  .nav-tabs button{
+    background:transparent; border:1px solid rgba(255,255,255,.18); color:var(--creme);
+    padding:9px 15px; border-radius:8px; cursor:pointer; font-size:13.5px; font-weight:500;
+    display:flex; align-items:center; gap:7px; position:relative;
+  }
+  .nav-tabs button.active{ background:var(--dourado); color:var(--vinho-escuro); border-color:var(--dourado); font-weight:700; }
+  .nav-tabs .badge-count{
+    background:var(--vermelho); color:#fff; border-radius:20px; font-size:10.5px; padding:1px 6px; font-weight:700;
+  }
+  .top-right{ display:flex; align-items:center; gap:12px; font-family:'Inter',sans-serif; }
+  .sync-dot{ width:9px;height:9px;border-radius:50%; background:#8a8a8a; }
+  .sync-dot.ok{ background:var(--verde); }
+  .sync-dot.err{ background:var(--vermelho); }
+  .sync-dot.loading{ background:var(--dourado); animation:pulse 1s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.35} }
+  .logout-btn{ background:transparent; border:1px solid rgba(255,255,255,.25); color:var(--creme); padding:7px 12px; border-radius:7px; cursor:pointer; font-size:12.5px; }
+
+  main{ max-width:1180px; margin:0 auto; padding:26px 22px 60px; }
+
+  .panel{ background:var(--creme-card); border-radius:14px; box-shadow:var(--sombra); padding:22px; margin-bottom:20px; border:1px solid var(--linha); }
+  .panel h2{ font-size:17px; margin:0 0 4px; display:flex; align-items:center; gap:8px; }
+  .panel h2 i{ color:var(--vinho); }
+  .panel .desc{ font-family:'Inter',sans-serif; font-size:12.5px; color:var(--texto-suave); margin-bottom:18px; }
+
+  .row-flex{ display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; }
+  .field{ display:flex; flex-direction:column; gap:5px; font-family:'Inter',sans-serif; flex:1; min-width:160px; }
+  .field label{ font-size:12px; font-weight:600; color:var(--texto-suave); }
+  .field input, .field select, .field textarea{
+    padding:10px 12px; border-radius:8px; border:1.5px solid var(--linha); font-family:'Inter',sans-serif; font-size:13.5px; background:#fff; color:var(--texto);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color:var(--vinho); }
+  .checkbox-field{ display:flex; align-items:center; gap:8px; font-family:'Inter',sans-serif; font-size:13.5px; }
+  .checkbox-field input{ width:16px; height:16px; }
+
+  .btn{ font-family:'Inter',sans-serif; font-weight:600; font-size:13px; padding:10px 18px; border-radius:8px; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:7px; }
+  .btn-vinho{ background:linear-gradient(135deg, var(--vinho), var(--vinho-escuro)); color:var(--dourado-claro); }
+  .btn-vinho:hover{ transform:translateY(-1px); }
+  .btn-ghost{ background:transparent; border:1.5px solid var(--linha); color:var(--texto); }
+  .btn-danger{ background:transparent; border:1.5px solid var(--vermelho); color:var(--vermelho); }
+  .btn-sm{ padding:6px 11px; font-size:12px; }
+
+  table{ width:100%; border-collapse:collapse; font-family:'Inter',sans-serif; font-size:13px; }
+  thead th{ text-align:left; padding:10px 12px; color:var(--texto-suave); font-size:11.5px; text-transform:uppercase; letter-spacing:.4px; border-bottom:2px solid var(--linha); }
+  tbody td{ padding:11px 12px; border-bottom:1px solid var(--linha); vertical-align:middle; }
+  tbody tr:hover{ background:rgba(90,10,26,0.03); }
+  .empty-state{ text-align:center; padding:40px 20px; color:var(--texto-suave); font-family:'Inter',sans-serif; font-size:13.5px; }
+
+  .pill{ display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:20px; font-size:11.5px; font-weight:700; font-family:'Inter',sans-serif; }
+  .pill-red{ background:rgba(161,61,61,.12); color:var(--vermelho); }
+  .pill-yellow{ background:rgba(201,168,76,.18); color:#8a6d1f; }
+  .pill-green{ background:rgba(76,122,82,.12); color:var(--verde); }
+  .pill-gray{ background:rgba(107,85,68,.1); color:var(--texto-suave); }
+
+  .kpi-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:14px; margin-bottom:20px; }
+  .kpi{ background:var(--creme-card); border:1px solid var(--linha); border-radius:12px; padding:16px 18px; box-shadow:var(--sombra); }
+  .kpi .num{ font-size:26px; font-weight:700; font-family:'Lora',serif; }
+  .kpi .lbl{ font-family:'Inter',sans-serif; font-size:12px; color:var(--texto-suave); margin-top:2px; }
+  .kpi.hl-red .num{ color:var(--vermelho); }
+  .kpi.hl-yellow .num{ color:#8a6d1f; }
+
+  .alert-item{ display:flex; align-items:center; justify-content:space-between; gap:14px; padding:13px 16px; border-radius:10px; margin-bottom:9px; font-family:'Inter',sans-serif; border-left:4px solid var(--linha); background:#fff; }
+  .alert-item.red{ border-left-color:var(--vermelho); background:rgba(161,61,61,.05); }
+  .alert-item.yellow{ border-left-color:var(--dourado); background:rgba(201,168,76,.07); }
+  .alert-item .name{ font-weight:600; font-size:13.5px; }
+  .alert-item .meta{ font-size:12px; color:var(--texto-suave); }
+
+  .modal-bg{ position:fixed; inset:0; background:rgba(30,5,10,.55); display:none; align-items:center; justify-content:center; z-index:50; padding:20px; }
+  .modal-bg.show{ display:flex; }
+  .modal{ background:var(--creme-card); border-radius:14px; padding:26px; width:100%; max-width:520px; max-height:88vh; overflow-y:auto; border-top:4px solid var(--dourado); }
+  .modal h3{ margin:0 0 16px; font-size:17px; }
+  .modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:18px; }
+
+  .toast-wrap{ position:fixed; bottom:22px; right:22px; z-index:80; display:flex; flex-direction:column; gap:8px; }
+  .toast{ font-family:'Inter',sans-serif; font-size:13px; padding:11px 18px; border-radius:9px; color:#fff; background:var(--verde); box-shadow:0 8px 20px rgba(0,0,0,.2); }
+  .toast.err{ background:var(--vermelho); }
+
+  select#empresaFiltro{ min-width:220px; }
+  @media (max-width:720px){
+    .topbar{ padding:14px 16px; }
+    .nav-tabs{ width:100%; overflow-x:auto; }
+    main{ padding:18px 14px 50px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-card">
+    <div class="brand-mark"><i class="ti ti-crown"></i></div>
+    <h1>Contabilidade Daymar</h1>
+    <div class="sub">Departamento Pessoal &middot; acesso restrito</div>
+    <input type="password" id="senhaInput" placeholder="Digite a senha" class="sans" />
+    <button class="btn-primary" onclick="tentarLogin()">Entrar</button>
+    <div class="login-error" id="loginErro"></div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="ico"><i class="ti ti-crown"></i></div>
+      <div>
+        <h1>CONTABILIDADE DAYMAR</h1>
+        <div class="tagline">Departamento Pessoal</div>
+      </div>
+    </div>
+    <div class="nav-tabs">
+      <button id="tab-btn-alertas" onclick="switchTab('alertas')"><i class="ti ti-bell"></i> Alertas <span class="badge-count" id="alertCount" style="display:none">0</span></button>
+      <button id="tab-btn-empresas" onclick="switchTab('empresas')"><i class="ti ti-building"></i> Empresas</button>
+      <button id="tab-btn-funcionarios" onclick="switchTab('funcionarios')"><i class="ti ti-users"></i> Funcionários</button>
+    </div>
+    <div class="top-right">
+      <span class="sync-dot" id="syncDot" title="status de sincronização"></span>
+      <button class="logout-btn sans" onclick="logout()"><i class="ti ti-logout-2"></i> Sair</button>
+    </div>
+  </div>
+
+  <main id="mainContent"></main>
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+const SENHA_CORRETA = "Cissa2026*";
+
+function tentarLogin(){
+  const val = document.getElementById('senhaInput').value;
+  if(val === SENHA_CORRETA){
+    sessionStorage.setItem('daymar_auth','1');
+    mostrarApp();
+  } else {
+    document.getElementById('loginErro').textContent = 'Senha incorreta. Tente novamente.';
+  }
+}
+document.getElementById('senhaInput').addEventListener('keydown', e=>{ if(e.key==='Enter') tentarLogin(); });
+
+function mostrarApp(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  init();
+}
+function logout(){
+  sessionStorage.removeItem('daymar_auth');
+  location.reload();
+}
+if(sessionStorage.getItem('daymar_auth')==='1'){ mostrarApp(); }
+
+/* ---------------- Data / API ---------------- */
+let empresas = [];
+let funcionarios = [];
+let currentTab = 'alertas';
+let filtroEmpresaId = '';
+
+function syncBadge(state){
+  const d = document.getElementById('syncDot');
+  d.className = 'sync-dot ' + (state||'');
+}
+function toast(msg, ok=true){
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast' + (ok?'':' err');
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(()=>el.remove(), 3200);
+}
+
+async function apiGet(resource){
+  const r = await fetch(`/api/${resource}`);
+  if(!r.ok) throw new Error('Falha ao buscar dados');
+  return r.json();
+}
+async function apiPost(resource, body){
+  const r = await fetch(`/api/${resource}`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  if(!r.ok) throw new Error('Falha ao salvar');
+  return r.json();
+}
+async function apiPut(resource, body){
+  const r = await fetch(`/api/${resource}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  if(!r.ok) throw new Error('Falha ao atualizar');
+  return r.json();
+}
+async function apiDelete(resource, id){
+  const r = await fetch(`/api/${resource}?id=${id}`, { method:'DELETE' });
+  if(!r.ok) throw new Error('Falha ao excluir');
+  return r.json();
+}
+
+async function loadData(){
+  syncBadge('loading');
+  try{
+    empresas = await apiGet('empresas');
+    funcionarios = await apiGet('funcionarios');
+    syncBadge('ok');
+  }catch(e){
+    syncBadge('err');
+    toast('Erro ao carregar dados. Verifique a conexão.', false);
+  }
+  render();
+}
+
+function init(){ loadData(); }
+
+/* ---------------- Helpers de data ---------------- */
+function diasAte(dataStr){
+  if(!dataStr) return null;
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const alvo = new Date(dataStr + 'T00:00:00');
+  return Math.round((alvo - hoje) / 86400000);
+}
+function formatarData(dataStr){
+  if(!dataStr) return '—';
+  const [y,m,d] = dataStr.split('-');
+  return `${d}/${m}/${y}`;
+}
+function statusFerias(dias){
+  if(dias === null) return {cor:'gray', texto:'Sem data'};
+  if(dias < 0) return {cor:'red', texto:`Vencida há ${Math.abs(dias)} dia(s)`};
+  if(dias <= 45) return {cor: dias<=15 ? 'red':'yellow', texto:`Vence em ${dias} dia(s)`};
+  return {cor:'green', texto:`Vence em ${dias} dia(s)`};
+}
+function empresaNome(id){
+  const e = empresas.find(x=>x.id===id);
+  return e ? e.nome : '—';
+}
+
+/* ---------------- Render principal ---------------- */
+function switchTab(tab){
+  currentTab = tab;
+  ['alertas','empresas','funcionarios'].forEach(t=>{
+    document.getElementById('tab-btn-'+t).classList.toggle('active', t===tab);
+  });
+  render();
+}
+
+function render(){
+  atualizarBadgeAlertas();
+  const main = document.getElementById('mainContent');
+  if(currentTab==='alertas') main.innerHTML = renderAlertas();
+  else if(currentTab==='empresas') main.innerHTML = renderEmpresas();
+  else if(currentTab==='funcionarios') main.innerHTML = renderFuncionarios();
+}
+
+function atualizarBadgeAlertas(){
+  const criticos = funcionarios.filter(f=>{
+    const d1 = diasAte(f.ferias_vencimento);
+    const d2 = f.salario_familia ? diasAte(f.salario_familia_cessa) : null;
+    return (d1!==null && d1<=45) || (d2!==null && d2<=45);
+  }).length;
+  const badge = document.getElementById('alertCount');
+  if(criticos>0){ badge.style.display='inline-block'; badge.textContent = criticos; }
+  else { badge.style.display='none'; }
+}
+
+/* ---------------- Tab: Alertas ---------------- */
+function renderAlertas(){
+  const alertasFerias = funcionarios
+    .map(f=>({f, dias: diasAte(f.ferias_vencimento), tipo:'ferias'}))
+    .filter(x=>x.dias!==null && x.dias<=45)
+    .sort((a,b)=>a.dias-b.dias);
+
+  const alertasSF = funcionarios
+    .filter(f=>f.salario_familia && f.salario_familia_cessa)
+    .map(f=>({f, dias: diasAte(f.salario_familia_cessa), tipo:'sf'}))
+    .filter(x=>x.dias!==null && x.dias<=45)
+    .sort((a,b)=>a.dias-b.dias);
+
+  const totalFolha = funcionarios.reduce((s,f)=>s+(parseFloat(f.salario)||0),0);
+  const comSF = funcionarios.filter(f=>f.salario_familia).length;
+
+  function itemHtml(x, label, icon){
+    const dias = x.dias;
+    const cor = dias<0 ? 'red' : (dias<=15 ? 'red':'yellow');
+    const texto = dias<0 ? `Vencida há ${Math.abs(dias)} dia(s)` : `Vence em ${dias} dia(s)`;
+    return `
+      <div class="alert-item ${cor}">
+        <div>
+          <div class="name"><i class="ti ${icon}"></i> ${x.f.nome}</div>
+          <div class="meta">${empresaNome(x.f.empresa_id)} &middot; ${label}</div>
+        </div>
+        <span class="pill pill-${cor}">${texto}</span>
+      </div>`;
+  }
+
+  const listaFerias = alertasFerias.length
+    ? alertasFerias.map(x=>itemHtml(x,'Vencimento de férias','ti-beach')).join('')
+    : `<div class="empty-state">Nenhuma férias vencendo nos próximos 45 dias.</div>`;
+
+  const listaSF = alertasSF.length
+    ? alertasSF.map(x=>itemHtml(x,'Cessação do salário família','ti-heart-handshake')).join('')
+    : `<div class="empty-state">Nenhum salário família cessando nos próximos 45 dias.</div>`;
+
+  return `
+    <div class="kpi-grid">
+      <div class="kpi"><div class="num">${empresas.length}</div><div class="lbl">Empresas cadastradas</div></div>
+      <div class="kpi"><div class="num">${funcionarios.length}</div><div class="lbl">Funcionários</div></div>
+      <div class="kpi hl-yellow"><div class="num">${alertasFerias.length}</div><div class="lbl">Férias próximas do vencimento</div></div>
+      <div class="kpi hl-red"><div class="num">${alertasSF.length}</div><div class="lbl">Salário família a cessar</div></div>
+      <div class="kpi"><div class="num">${comSF}</div><div class="lbl">Recebem salário família</div></div>
+      <div class="kpi"><div class="num">R$ ${totalFolha.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div><div class="lbl">Total da folha</div></div>
+    </div>
+
+    <div class="panel">
+      <h2><i class="ti ti-beach"></i> Férias próximas do vencimento</h2>
+      <div class="desc">Alerta automático para férias que vencem em até 45 dias, ou já vencidas.</div>
+      ${listaFerias}
+    </div>
+
+    <div class="panel">
+      <h2><i class="ti ti-heart-handshake"></i> Salário família — cessações próximas</h2>
+      <div class="desc">Funcionários cujo benefício de salário família vai cessar em até 45 dias.</div>
+      ${listaSF}
+    </div>
+  `;
+}
+
+/* ---------------- Tab: Empresas ---------------- */
+function renderEmpresas(){
+  const linhas = empresas.length ? empresas.map(e=>`
+    <tr>
+      <td><strong>${e.nome}</strong></td>
+      <td>${e.cnpj || '—'}</td>
+      <td>${funcionarios.filter(f=>f.empresa_id===e.id).length}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="abrirModalEmpresa('${e.id}')"><i class="ti ti-edit"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="excluirEmpresa('${e.id}','${(e.nome||'').replace(/'/g,"")}')"><i class="ti ti-trash"></i></button>
+      </td>
+    </tr>`).join('') : `<tr><td colspan="4" class="empty-state">Nenhuma empresa cadastrada ainda.</td></tr>`;
+
+  return `
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:6px;">
+        <div>
+          <h2><i class="ti ti-building"></i> Empresas</h2>
+          <div class="desc">Cadastro das empresas atendidas pelo departamento pessoal.</div>
+        </div>
+        <button class="btn btn-vinho" onclick="abrirModalEmpresa()"><i class="ti ti-plus"></i> Nova empresa</button>
+      </div>
+      <table>
+        <thead><tr><th>Nome</th><th>CNPJ</th><th>Funcionários</th><th>Ações</th></tr></thead>
+        <tbody>${linhas}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function abrirModalEmpresa(id){
+  const e = id ? empresas.find(x=>x.id===id) : null;
+  document.getElementById('modalBody').innerHTML = `
+    <h3>${e ? 'Editar empresa' : 'Nova empresa'}</h3>
+    <div class="field" style="margin-bottom:12px;">
+      <label>Nome da empresa</label>
+      <input id="fEmpNome" value="${e ? e.nome : ''}" placeholder="Ex: Padaria Bom Pão Ltda" />
+    </div>
+    <div class="field">
+      <label>CNPJ</label>
+      <input id="fEmpCnpj" value="${e ? (e.cnpj||'') : ''}" placeholder="00.000.000/0000-00" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-vinho" onclick="salvarEmpresa('${id||''}')"><i class="ti ti-check"></i> Salvar</button>
+    </div>
+  `;
+  document.getElementById('modalBg').classList.add('show');
+}
+
+async function salvarEmpresa(id){
+  const nome = document.getElementById('fEmpNome').value.trim();
+  const cnpj = document.getElementById('fEmpCnpj').value.trim();
+  if(!nome){ toast('Informe o nome da empresa', false); return; }
+  syncBadge('loading');
+  try{
+    if(id){ await apiPut('empresas', {id, nome, cnpj}); toast('Empresa atualizada!'); }
+    else { await apiPost('empresas', {nome, cnpj}); toast('Empresa cadastrada!'); }
+    fecharModal();
+    await loadData();
+  }catch(e){ syncBadge('err'); toast('Erro ao salvar empresa', false); }
+}
+
+async function excluirEmpresa(id, nome){
+  if(!confirm(`Excluir "${nome}"? Os funcionários vinculados também poderão ficar sem empresa.`)) return;
+  syncBadge('loading');
+  try{ await apiDelete('empresas', id); toast('Empresa excluída'); await loadData(); }
+  catch(e){ syncBadge('err'); toast('Erro ao excluir', false); }
+}
+
+/* ---------------- Tab: Funcionários ---------------- */
+function renderFuncionarios(){
+  const opcoesEmpresa = empresas.map(e=>`<option value="${e.id}" ${filtroEmpresaId===e.id?'selected':''}>${e.nome}</option>`).join('');
+  const lista = funcionarios.filter(f=> !filtroEmpresaId || f.empresa_id===filtroEmpresaId);
+
+  const linhas = lista.length ? lista.map(f=>{
+    const diasF = diasAte(f.ferias_vencimento);
+    const stF = statusFerias(diasF);
+    const sfInfo = f.salario_familia
+      ? `Sim &middot; cessa ${formatarData(f.salario_familia_cessa)}`
+      : 'Não';
+    return `
+    <tr>
+      <td><strong>${f.nome}</strong><div style="font-size:11px;color:var(--texto-suave)">${empresaNome(f.empresa_id)}</div></td>
+      <td>R$ ${(parseFloat(f.salario)||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
+      <td class="sans" style="font-size:12.5px;">${sfInfo}</td>
+      <td>${formatarData(f.ferias_vencimento)}</td>
+      <td><span class="pill pill-${stF.cor}">${stF.texto}</span></td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="abrirModalFuncionario('${f.id}')"><i class="ti ti-edit"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="excluirFuncionario('${f.id}','${(f.nome||'').replace(/'/g,"")}')"><i class="ti ti-trash"></i></button>
+      </td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="6" class="empty-state">Nenhum funcionário cadastrado.</td></tr>`;
+
+  return `
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:10px;">
+        <div>
+          <h2><i class="ti ti-users"></i> Funcionários</h2>
+          <div class="desc">Cadastro de salário, salário família e vencimento de férias.</div>
+        </div>
+        <button class="btn btn-vinho" onclick="abrirModalFuncionario()"><i class="ti ti-plus"></i> Novo funcionário</button>
+      </div>
+      <div class="row-flex" style="margin-bottom:14px;">
+        <div class="field" style="max-width:260px;">
+          <label>Filtrar por empresa</label>
+          <select id="empresaFiltro" onchange="filtroEmpresaId=this.value; render();">
+            <option value="">Todas as empresas</option>
+            ${opcoesEmpresa}
+          </select>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Funcionário</th><th>Salário</th><th>Salário família</th><th>Vencimento férias</th><th>Status</th><th>Ações</th></tr></thead>
+        <tbody>${linhas}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function abrirModalFuncionario(id){
+  const f = id ? funcionarios.find(x=>x.id===id) : null;
+  const opcoesEmpresa = empresas.map(e=>`<option value="${e.id}" ${f && f.empresa_id===e.id?'selected':''}>${e.nome}</option>`).join('');
+
+  if(empresas.length===0){
+    toast('Cadastre uma empresa antes de adicionar funcionários', false);
+    return;
+  }
+
+  document.getElementById('modalBody').innerHTML = `
+    <h3>${f ? 'Editar funcionário' : 'Novo funcionário'}</h3>
+    <div class="row-flex" style="margin-bottom:12px;">
+      <div class="field">
+        <label>Empresa</label>
+        <select id="fFuncEmpresa">${opcoesEmpresa}</select>
+      </div>
+      <div class="field">
+        <label>Nome do funcionário</label>
+        <input id="fFuncNome" value="${f ? f.nome : ''}" placeholder="Nome completo" />
+      </div>
+    </div>
+    <div class="row-flex" style="margin-bottom:12px;">
+      <div class="field">
+        <label>Salário</label>
+        <input id="fFuncSalario" type="number" step="0.01" value="${f ? f.salario||'' : ''}" placeholder="0,00" />
+      </div>
+      <div class="field">
+        <label>Vencimento das férias</label>
+        <input id="fFuncFerias" type="date" value="${f ? f.ferias_vencimento||'' : ''}" />
+      </div>
+    </div>
+    <div class="checkbox-field" style="margin-bottom:12px;">
+      <input type="checkbox" id="fFuncTemSF" ${f && f.salario_familia ? 'checked':''} onchange="toggleCamposSF(this.checked)" />
+      <label for="fFuncTemSF">Recebe salário família</label>
+    </div>
+    <div class="row-flex" id="camposSF" style="display:${f && f.salario_familia ? 'flex':'none'}; margin-bottom:12px;">
+      <div class="field">
+        <label>Valor do salário família</label>
+        <input id="fFuncSFValor" type="number" step="0.01" value="${f ? f.salario_familia_valor||'' : ''}" placeholder="0,00" />
+      </div>
+      <div class="field">
+        <label>Data de cessação</label>
+        <input id="fFuncSFCessa" type="date" value="${f ? f.salario_familia_cessa||'' : ''}" />
+      </div>
+    </div>
+    <div class="field">
+      <label>Observações</label>
+      <textarea id="fFuncObs" rows="2" placeholder="Anotações gerais">${f ? f.obs||'' : ''}</textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-vinho" onclick="salvarFuncionario('${id||''}')"><i class="ti ti-check"></i> Salvar</button>
+    </div>
+  `;
+  document.getElementById('modalBg').classList.add('show');
+}
+
+function toggleCamposSF(checked){
+  document.getElementById('camposSF').style.display = checked ? 'flex' : 'none';
+}
+
+async function salvarFuncionario(id){
+  const empresa_id = document.getElementById('fFuncEmpresa').value;
+  const nome = document.getElementById('fFuncNome').value.trim();
+  const salario = parseFloat(document.getElementById('fFuncSalario').value) || 0;
+  const ferias_vencimento = document.getElementById('fFuncFerias').value || null;
+  const salario_familia = document.getElementById('fFuncTemSF').checked;
+  const salario_familia_valor = salario_familia ? (parseFloat(document.getElementById('fFuncSFValor').value) || 0) : null;
+  const salario_familia_cessa = salario_familia ? (document.getElementById('fFuncSFCessa').value || null) : null;
+  const obs = document.getElementById('fFuncObs').value.trim();
+
+  if(!nome){ toast('Informe o nome do funcionário', false); return; }
+  if(!empresa_id){ toast('Selecione a empresa', false); return; }
+
+  const payload = { empresa_id, nome, salario, ferias_vencimento, salario_familia, salario_familia_valor, salario_familia_cessa, obs };
+
+  syncBadge('loading');
+  try{
+    if(id){ await apiPut('funcionarios', {id, ...payload}); toast('Funcionário atualizado!'); }
+    else { await apiPost('funcionarios', payload); toast('Funcionário cadastrado!'); }
+    fecharModal();
+    await loadData();
+  }catch(e){ syncBadge('err'); toast('Erro ao salvar funcionário', false); }
+}
+
+async function excluirFuncionario(id, nome){
+  if(!confirm(`Excluir "${nome}"? Esta ação não pode ser desfeita.`)) return;
+  syncBadge('loading');
+  try{ await apiDelete('funcionarios', id); toast('Funcionário excluído'); await loadData(); }
+  catch(e){ syncBadge('err'); toast('Erro ao excluir', false); }
+}
+
+function fecharModal(){
+  document.getElementById('modalBg').classList.remove('show');
+}
+document.getElementById('modalBg').addEventListener('click', e=>{
+  if(e.target.id==='modalBg') fecharModal();
+});
+</script>
+</body>
+</html>
