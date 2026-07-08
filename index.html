@@ -33,7 +33,6 @@
   .sans{ font-family:'Inter', -apple-system, sans-serif; }
   a{ color:inherit; }
 
-  /* ---------- Login ---------- */
   #login-screen{
     min-height:100vh;
     display:flex;
@@ -76,7 +75,6 @@
   .btn-primary:hover{ transform:translateY(-1px); box-shadow:0 8px 20px rgba(90,10,26,.3); }
   .login-error{ color:var(--vermelho); font-family:'Inter',sans-serif; font-size:13px; margin-top:10px; min-height:16px; }
 
-  /* ---------- App shell ---------- */
   #app{ display:none; min-height:100vh; }
   .topbar{
     background:linear-gradient(135deg, var(--vinho), var(--vinho-escuro));
@@ -95,7 +93,7 @@
   .topbar .brand .ico i{ color:var(--dourado-claro); font-size:19px; }
   .topbar h1{ font-size:17px; margin:0; letter-spacing:.4px; }
   .topbar .brand .tagline{ font-family:'Inter',sans-serif; font-size:11px; color:var(--dourado-claro); opacity:.85; }
-  .nav-tabs{ display:flex; gap:6px; font-family:'Inter',sans-serif; }
+  .nav-tabs{ display:flex; gap:6px; font-family:'Inter',sans-serif; flex-wrap:wrap; }
   .nav-tabs button{
     background:transparent; border:1px solid rgba(255,255,255,.18); color:var(--creme);
     padding:9px 15px; border-radius:8px; cursor:pointer; font-size:13.5px; font-weight:500;
@@ -127,6 +125,7 @@
     padding:10px 12px; border-radius:8px; border:1.5px solid var(--linha); font-family:'Inter',sans-serif; font-size:13.5px; background:#fff; color:var(--texto);
   }
   .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color:var(--vinho); }
+  .field input:disabled{ background:#f1ece0; color:var(--texto-suave); }
   .checkbox-field{ display:flex; align-items:center; gap:8px; font-family:'Inter',sans-serif; font-size:13.5px; }
   .checkbox-field input{ width:16px; height:16px; }
 
@@ -141,6 +140,8 @@
   thead th{ text-align:left; padding:10px 12px; color:var(--texto-suave); font-size:11.5px; text-transform:uppercase; letter-spacing:.4px; border-bottom:2px solid var(--linha); }
   tbody td{ padding:11px 12px; border-bottom:1px solid var(--linha); vertical-align:middle; }
   tbody tr:hover{ background:rgba(90,10,26,0.03); }
+  tr.clickable-row{ cursor:pointer; }
+  tr.linha-inativa td{ opacity:.5; }
   .empty-state{ text-align:center; padding:40px 20px; color:var(--texto-suave); font-family:'Inter',sans-serif; font-size:13.5px; }
 
   .pill{ display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:20px; font-size:11.5px; font-weight:700; font-family:'Inter',sans-serif; }
@@ -148,6 +149,7 @@
   .pill-yellow{ background:rgba(201,168,76,.18); color:#8a6d1f; }
   .pill-green{ background:rgba(76,122,82,.12); color:var(--verde); }
   .pill-gray{ background:rgba(107,85,68,.1); color:var(--texto-suave); }
+  .badge-inline{ font-family:'Inter',sans-serif; font-size:9.5px; padding:2px 7px; border-radius:20px; background:rgba(90,10,26,.09); color:var(--vinho); font-weight:700; margin-left:6px; vertical-align:middle; }
 
   .kpi-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:14px; margin-bottom:20px; }
   .kpi{ background:var(--creme-card); border:1px solid var(--linha); border-radius:12px; padding:16px 18px; box-shadow:var(--sombra); }
@@ -156,7 +158,7 @@
   .kpi.hl-red .num{ color:var(--vermelho); }
   .kpi.hl-yellow .num{ color:#8a6d1f; }
 
-  .alert-item{ display:flex; align-items:center; justify-content:space-between; gap:14px; padding:13px 16px; border-radius:10px; margin-bottom:9px; font-family:'Inter',sans-serif; border-left:4px solid var(--linha); background:#fff; }
+  .alert-item{ display:flex; align-items:center; justify-content:space-between; gap:14px; padding:13px 16px; border-radius:10px; margin-bottom:9px; font-family:'Inter',sans-serif; border-left:4px solid var(--linha); background:#fff; flex-wrap:wrap; }
   .alert-item.red{ border-left-color:var(--vermelho); background:rgba(161,61,61,.05); }
   .alert-item.yellow{ border-left-color:var(--dourado); background:rgba(201,168,76,.07); }
   .alert-item .name{ font-weight:600; font-size:13.5px; }
@@ -164,15 +166,22 @@
 
   .modal-bg{ position:fixed; inset:0; background:rgba(30,5,10,.55); display:none; align-items:center; justify-content:center; z-index:50; padding:20px; }
   .modal-bg.show{ display:flex; }
-  .modal{ background:var(--creme-card); border-radius:14px; padding:26px; width:100%; max-width:520px; max-height:88vh; overflow-y:auto; border-top:4px solid var(--dourado); }
+  .modal{ background:var(--creme-card); border-radius:14px; padding:26px; width:100%; max-width:600px; max-height:90vh; overflow-y:auto; border-top:4px solid var(--dourado); }
   .modal h3{ margin:0 0 16px; font-size:17px; }
   .modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:18px; }
+  .subsection-title{ font-family:'Inter',sans-serif; font-weight:700; font-size:12.5px; margin:20px 0 10px; color:var(--vinho-escuro); text-transform:uppercase; letter-spacing:.4px; border-bottom:1px solid var(--linha); padding-bottom:6px; }
+  .subsection-title:first-of-type{ margin-top:4px; }
+  .hint-text{ font-family:'Inter',sans-serif; font-size:11.5px; color:var(--texto-suave); margin-top:4px; }
+  .hist-item{ display:flex; justify-content:space-between; align-items:center; padding:8px 11px; border:1px solid var(--linha); border-radius:8px; margin-bottom:6px; font-family:'Inter',sans-serif; font-size:12.5px; background:#fff; }
+  .hist-item .val{ font-weight:700; color:var(--vinho); }
+  .vencimento-preview{ font-family:'Inter',sans-serif; font-weight:700; font-size:14px; color:var(--vinho); padding:9px 0; }
 
   .toast-wrap{ position:fixed; bottom:22px; right:22px; z-index:80; display:flex; flex-direction:column; gap:8px; }
   .toast{ font-family:'Inter',sans-serif; font-size:13px; padding:11px 18px; border-radius:9px; color:#fff; background:var(--verde); box-shadow:0 8px 20px rgba(0,0,0,.2); }
   .toast.err{ background:var(--vermelho); }
 
   select#empresaFiltro{ min-width:220px; }
+  body.modo-leitura .acao-editor{ display:none !important; }
   @media (max-width:720px){
     .topbar{ padding:14px 16px; }
     .nav-tabs{ width:100%; overflow-x:auto; }
@@ -206,8 +215,10 @@
       <button id="tab-btn-alertas" onclick="switchTab('alertas')"><i class="ti ti-bell"></i> Alertas <span class="badge-count" id="alertCount" style="display:none">0</span></button>
       <button id="tab-btn-empresas" onclick="switchTab('empresas')"><i class="ti ti-building"></i> Empresas</button>
       <button id="tab-btn-funcionarios" onclick="switchTab('funcionarios')"><i class="ti ti-users"></i> Funcionários</button>
+      <button id="tab-btn-contribuintes" onclick="switchTab('contribuintes')"><i class="ti ti-briefcase"></i> Contribuintes</button>
     </div>
     <div class="top-right">
+      <span class="badge-count" id="avisoSomenteLeitura" style="display:none; background:var(--dourado); color:var(--vinho-escuro);"><i class="ti ti-eye"></i> Somente visualização</span>
       <span class="sync-dot" id="syncDot" title="status de sincronização"></span>
       <button class="logout-btn sans" onclick="logout()"><i class="ti ti-logout-2"></i> Sair</button>
     </div>
@@ -224,11 +235,17 @@
 
 <script>
 const SENHA_CORRETA = "Cissa2026*";
+const SENHA_VISUALIZACAO = "Consulta2026*";
 
 function tentarLogin(){
   const val = document.getElementById('senhaInput').value;
   if(val === SENHA_CORRETA){
     sessionStorage.setItem('daymar_auth','1');
+    sessionStorage.setItem('daymar_role','editor');
+    mostrarApp();
+  } else if(val === SENHA_VISUALIZACAO){
+    sessionStorage.setItem('daymar_auth','1');
+    sessionStorage.setItem('daymar_role','viewer');
     mostrarApp();
   } else {
     document.getElementById('loginErro').textContent = 'Senha incorreta. Tente novamente.';
@@ -239,20 +256,30 @@ document.getElementById('senhaInput').addEventListener('keydown', e=>{ if(e.key=
 function mostrarApp(){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').style.display='block';
+  modoSomenteLeitura = sessionStorage.getItem('daymar_role') === 'viewer';
+  document.body.classList.toggle('modo-leitura', modoSomenteLeitura);
+  const aviso = document.getElementById('avisoSomenteLeitura');
+  if(aviso) aviso.style.display = modoSomenteLeitura ? 'inline-flex' : 'none';
   init();
 }
 function logout(){
   sessionStorage.removeItem('daymar_auth');
+  sessionStorage.removeItem('daymar_role');
   location.reload();
 }
 if(sessionStorage.getItem('daymar_auth')==='1'){ mostrarApp(); }
 
-/* ---------------- Data / API ---------------- */
+let modoSomenteLeitura = false;
 let empresas = [];
 let funcionarios = [];
+let contribuintes = [];
 let currentTab = 'alertas';
 let filtroEmpresaId = '';
 let buscaFuncionario = '';
+let buscaEmpresa = '';
+let buscaContribuinte = '';
+let filtroEmpresaContribId = '';
+let tempHistoricoSalarial = [];
 
 function syncBadge(state){
   const d = document.getElementById('syncDot');
@@ -268,22 +295,22 @@ function toast(msg, ok=true){
 }
 
 async function apiGet(resource){
-  const r = await fetch(`/api/${resource}`);
+  const r = await fetch('/api/'+resource);
   if(!r.ok) throw new Error('Falha ao buscar dados');
   return r.json();
 }
 async function apiPost(resource, body){
-  const r = await fetch(`/api/${resource}`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  const r = await fetch('/api/'+resource, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
   if(!r.ok) throw new Error('Falha ao salvar');
   return r.json();
 }
 async function apiPut(resource, body){
-  const r = await fetch(`/api/${resource}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  const r = await fetch('/api/'+resource, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
   if(!r.ok) throw new Error('Falha ao atualizar');
   return r.json();
 }
 async function apiDelete(resource, id){
-  const r = await fetch(`/api/${resource}?id=${id}`, { method:'DELETE' });
+  const r = await fetch('/api/'+resource+'?id='+id, { method:'DELETE' });
   if(!r.ok) throw new Error('Falha ao excluir');
   return r.json();
 }
@@ -293,6 +320,7 @@ async function loadData(){
   try{
     empresas = await apiGet('empresas');
     funcionarios = await apiGet('funcionarios');
+    try{ contribuintes = await apiGet('contribuintes'); }catch(e){ contribuintes = []; }
     syncBadge('ok');
   }catch(e){
     syncBadge('err');
@@ -303,7 +331,6 @@ async function loadData(){
 
 function init(){ loadData(); }
 
-/* ---------------- Helpers de data ---------------- */
 function diasAte(dataStr){
   if(!dataStr) return null;
   const hoje = new Date(); hoje.setHours(0,0,0,0);
@@ -312,27 +339,43 @@ function diasAte(dataStr){
 }
 function formatarData(dataStr){
   if(!dataStr) return '—';
-  const [y,m,d] = dataStr.split('-');
-  return `${d}/${m}/${y}`;
+  const partes = dataStr.split('-');
+  return partes[2] + '/' + partes[1] + '/' + partes[0];
+}
+function somarAnos(dataStr, anos){
+  if(!dataStr) return null;
+  const partes = dataStr.split('-').map(Number);
+  const dt = new Date(partes[0]+anos, partes[1]-1, partes[2]);
+  const mm = String(dt.getMonth()+1).padStart(2,'0');
+  const dd = String(dt.getDate()).padStart(2,'0');
+  return dt.getFullYear() + '-' + mm + '-' + dd;
 }
 function statusFerias(dias){
   if(dias === null) return {cor:'gray', texto:'Sem data'};
-  if(dias < 0) return {cor:'red', texto:`Vencida há ${Math.abs(dias)} dia(s)`};
-  if(dias <= 45) return {cor: dias<=15 ? 'red':'yellow', texto:`Vence em ${dias} dia(s)`};
-  return {cor:'green', texto:`Vence em ${dias} dia(s)`};
+  if(dias < 0) return {cor:'red', texto:'Vencida há ' + Math.abs(dias) + ' dia(s)'};
+  if(dias <= 45) return {cor: dias<=15 ? 'red':'yellow', texto:'Vence em ' + dias + ' dia(s)'};
+  return {cor:'green', texto:'Vence em ' + dias + ' dia(s)'};
 }
 function empresaNome(id){
   const e = empresas.find(x=>x.id===id);
   return e ? e.nome : '—';
 }
+function formatarMoeda(v){
+  return 'R$ ' + (parseFloat(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2});
+}
 
-/* ---------------- Render principal ---------------- */
 function switchTab(tab){
   currentTab = tab;
-  ['alertas','empresas','funcionarios'].forEach(t=>{
+  ['alertas','empresas','funcionarios','contribuintes'].forEach(t=>{
     document.getElementById('tab-btn-'+t).classList.toggle('active', t===tab);
   });
   render();
+}
+
+function abrirFuncionariosDaEmpresa(empresaId){
+  filtroEmpresaId = empresaId;
+  buscaFuncionario = '';
+  switchTab('funcionarios');
 }
 
 function render(){
@@ -341,10 +384,12 @@ function render(){
   if(currentTab==='alertas') main.innerHTML = renderAlertas();
   else if(currentTab==='empresas') main.innerHTML = renderEmpresas();
   else if(currentTab==='funcionarios') main.innerHTML = renderFuncionarios();
+  else if(currentTab==='contribuintes') main.innerHTML = renderContribuintes();
 }
 
 function atualizarBadgeAlertas(){
   const criticos = funcionarios.filter(f=>{
+    if(f.ativo===false) return false;
     const d1 = diasAte(f.ferias_vencimento);
     const d2 = f.salario_familia ? diasAte(f.salario_familia_cessa) : null;
     const alertaFerias = d1!==null && d1<=45 && !f.ferias_revisado;
@@ -356,105 +401,92 @@ function atualizarBadgeAlertas(){
   else { badge.style.display='none'; }
 }
 
-/* ---------------- Tab: Alertas ---------------- */
 function renderAlertas(){
-  const alertasFerias = funcionarios
-    .map(f=>({f, dias: diasAte(f.ferias_vencimento), tipo:'ferias'}))
+  const ativos = funcionarios.filter(f=>f.ativo!==false);
+
+  const alertasFerias = ativos
+    .map(f=>({f, dias: diasAte(f.ferias_vencimento)}))
     .filter(x=>x.dias!==null && x.dias<=45 && !x.f.ferias_revisado)
     .sort((a,b)=>a.dias-b.dias);
 
-  const alertasSF = funcionarios
+  const alertasSF = ativos
     .filter(f=>f.salario_familia && f.salario_familia_cessa)
-    .map(f=>({f, dias: diasAte(f.salario_familia_cessa), tipo:'sf'}))
+    .map(f=>({f, dias: diasAte(f.salario_familia_cessa)}))
     .filter(x=>x.dias!==null && x.dias<=45 && !x.f.salario_familia_revisado)
     .sort((a,b)=>a.dias-b.dias);
 
-  const revisadosFerias = funcionarios.filter(f=>{
+  const revisadosFerias = ativos.filter(f=>{
     const d = diasAte(f.ferias_vencimento);
     return d!==null && d<=45 && f.ferias_revisado;
   });
-  const revisadosSF = funcionarios.filter(f=>{
+  const revisadosSF = ativos.filter(f=>{
     const d = f.salario_familia ? diasAte(f.salario_familia_cessa) : null;
     return d!==null && d<=45 && f.salario_familia_revisado;
   });
 
-  const totalFolha = funcionarios.reduce((s,f)=>s+(parseFloat(f.salario)||0),0);
-  const comSF = funcionarios.filter(f=>f.salario_familia).length;
+  const totalFolha = ativos.reduce((s,f)=>s+(parseFloat(f.salario)||0),0);
+  const comSF = ativos.filter(f=>f.salario_familia).length;
 
   function itemHtml(x, label, icon, tipo, revisado){
     const dias = x.dias;
     const cor = revisado ? 'gray' : (dias<0 ? 'red' : (dias<=15 ? 'red':'yellow'));
-    const texto = dias<0 ? `Vencida há ${Math.abs(dias)} dia(s)` : `Vence em ${dias} dia(s)`;
+    const texto = dias<0 ? ('Vencida há ' + Math.abs(dias) + ' dia(s)') : ('Vence em ' + dias + ' dia(s)');
     const acao = revisado
-      ? `<button class="btn btn-ghost btn-sm" onclick="marcarRevisado('${x.f.id}','${tipo}',false)"><i class="ti ti-arrow-back-up"></i> Desmarcar</button>`
-      : `<button class="btn btn-ghost btn-sm" onclick="marcarRevisado('${x.f.id}','${tipo}',true)"><i class="ti ti-check"></i> Marcar como revisado</button>`;
-    return `
-      <div class="alert-item ${revisado ? '' : cor}">
-        <div>
-          <div class="name"><i class="ti ${icon}"></i> ${x.f.nome}</div>
-          <div class="meta">${empresaNome(x.f.empresa_id)} &middot; ${label}</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="pill pill-${cor}">${texto}</span>
-          ${acao}
-        </div>
-      </div>`;
+      ? '<button class="btn btn-ghost btn-sm acao-editor" onclick="marcarRevisado(\'' + x.f.id + '\',\'' + tipo + '\',false)"><i class="ti ti-arrow-back-up"></i> Desmarcar</button>'
+      : '<button class="btn btn-ghost btn-sm acao-editor" onclick="marcarRevisado(\'' + x.f.id + '\',\'' + tipo + '\',true)"><i class="ti ti-check"></i> Marcar como revisado</button>';
+    return '<div class="alert-item ' + (revisado ? '' : cor) + '">' +
+        '<div><div class="name"><i class="ti ' + icon + '"></i> ' + x.f.nome + '</div>' +
+        '<div class="meta">' + empresaNome(x.f.empresa_id) + ' &middot; ' + label + '</div></div>' +
+        '<div style="display:flex;align-items:center;gap:10px;">' +
+        '<span class="pill pill-' + cor + '">' + texto + '</span>' + acao + '</div></div>';
   }
 
   const listaFerias = alertasFerias.length
     ? alertasFerias.map(x=>itemHtml(x,'Vencimento de férias','ti-beach','ferias',false)).join('')
-    : `<div class="empty-state">Nenhuma férias pendente de revisão nos próximos 45 dias.</div>`;
+    : '<div class="empty-state">Nenhuma férias pendente de revisão nos próximos 45 dias.</div>';
 
   const listaSF = alertasSF.length
     ? alertasSF.map(x=>itemHtml(x,'Cessação do salário família','ti-heart-handshake','sf',false)).join('')
-    : `<div class="empty-state">Nenhum salário família pendente de revisão nos próximos 45 dias.</div>`;
+    : '<div class="empty-state">Nenhum salário família pendente de revisão nos próximos 45 dias.</div>';
 
-  const listaRevisados = (revisadosFerias.length + revisadosSF.length) ? `
-    <div class="panel">
-      <h2><i class="ti ti-checklist"></i> Já revisados</h2>
-      <div class="desc">Itens que você já marcou como lançados no programa contábil.</div>
-      ${revisadosFerias.map(f=>itemHtml({f, dias: diasAte(f.ferias_vencimento)}, 'Vencimento de férias','ti-beach','ferias',true)).join('')}
-      ${revisadosSF.map(f=>itemHtml({f, dias: diasAte(f.salario_familia_cessa)}, 'Cessação do salário família','ti-heart-handshake','sf',true)).join('')}
-    </div>` : '';
+  const listaRevisados = (revisadosFerias.length + revisadosSF.length) ? (
+    '<div class="panel"><h2><i class="ti ti-checklist"></i> Já revisados</h2>' +
+    '<div class="desc">Itens que você já marcou como lançados no programa contábil.</div>' +
+    revisadosFerias.map(f=>itemHtml({f, dias: diasAte(f.ferias_vencimento)}, 'Vencimento de férias','ti-beach','ferias',true)).join('') +
+    revisadosSF.map(f=>itemHtml({f, dias: diasAte(f.salario_familia_cessa)}, 'Cessação do salário família','ti-heart-handshake','sf',true)).join('') +
+    '</div>'
+  ) : '';
 
-  return `
-    <div class="kpi-grid">
-      <div class="kpi"><div class="num">${empresas.length}</div><div class="lbl">Empresas cadastradas</div></div>
-      <div class="kpi"><div class="num">${funcionarios.length}</div><div class="lbl">Funcionários</div></div>
-      <div class="kpi hl-yellow"><div class="num">${alertasFerias.length}</div><div class="lbl">Férias a revisar</div></div>
-      <div class="kpi hl-red"><div class="num">${alertasSF.length}</div><div class="lbl">Salário família a revisar</div></div>
-      <div class="kpi"><div class="num">${comSF}</div><div class="lbl">Recebem salário família</div></div>
-      <div class="kpi"><div class="num">R$ ${totalFolha.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div><div class="lbl">Total da folha</div></div>
-    </div>
-
-    <div class="panel">
-      <h2><i class="ti ti-beach"></i> Férias próximas do vencimento</h2>
-      <div class="desc">Alerta automático para férias que vencem em até 45 dias, ou já vencidas. Marque como revisado depois de lançar no seu programa contábil.</div>
-      ${listaFerias}
-    </div>
-
-    <div class="panel">
-      <h2><i class="ti ti-heart-handshake"></i> Salário família — cessações próximas</h2>
-      <div class="desc">Funcionários cujo benefício de salário família vai cessar em até 45 dias.</div>
-      ${listaSF}
-    </div>
-
-    ${listaRevisados}
-  `;
+  return '' +
+    '<div class="kpi-grid">' +
+      '<div class="kpi"><div class="num">' + empresas.length + '</div><div class="lbl">Empresas cadastradas</div></div>' +
+      '<div class="kpi"><div class="num">' + ativos.length + '</div><div class="lbl">Funcionários ativos</div></div>' +
+      '<div class="kpi hl-yellow"><div class="num">' + alertasFerias.length + '</div><div class="lbl">Férias a revisar</div></div>' +
+      '<div class="kpi hl-red"><div class="num">' + alertasSF.length + '</div><div class="lbl">Salário família a revisar</div></div>' +
+      '<div class="kpi"><div class="num">' + comSF + '</div><div class="lbl">Recebem salário família</div></div>' +
+      '<div class="kpi"><div class="num">' + formatarMoeda(totalFolha) + '</div><div class="lbl">Total da folha (ativos)</div></div>' +
+    '</div>' +
+    '<div class="panel"><h2><i class="ti ti-beach"></i> Férias próximas do vencimento</h2>' +
+    '<div class="desc">Alerta automático para férias que vencem em até 45 dias, ou já vencidas. Marque como revisado depois de lançar no seu programa contábil.</div>' +
+    listaFerias + '</div>' +
+    '<div class="panel"><h2><i class="ti ti-heart-handshake"></i> Salário família — cessações próximas</h2>' +
+    '<div class="desc">Funcionários cujo benefício de salário família vai cessar em até 45 dias.</div>' +
+    listaSF + '</div>' +
+    listaRevisados;
 }
 
 async function marcarRevisado(funcId, tipo, valor){
+  if(modoSomenteLeitura){ toast('Você está no modo apenas visualização', false); return; }
   const campo = tipo === 'ferias' ? 'ferias_revisado' : 'salario_familia_revisado';
   syncBadge('loading');
   try{
-    await apiPut('funcionarios', {id: funcId, [campo]: valor});
+    const body = {id: funcId};
+    body[campo] = valor;
+    await apiPut('funcionarios', body);
     toast(valor ? 'Marcado como revisado!' : 'Marcação removida');
     await loadData();
   }catch(e){ syncBadge('err'); toast('Erro ao atualizar', false); }
 }
-
-/* ---------------- Tab: Empresas ---------------- */
-let buscaEmpresa = '';
 
 function listaEmpresasFiltrada(){
   const termo = buscaEmpresa.trim().toLowerCase();
@@ -462,16 +494,16 @@ function listaEmpresasFiltrada(){
 }
 
 function gerarLinhasEmpresas(lista){
-  return lista.length ? lista.map(e=>`
-    <tr>
-      <td><strong>${e.nome}</strong></td>
-      <td>${e.cnpj || '—'}</td>
-      <td>${funcionarios.filter(f=>f.empresa_id===e.id).length}</td>
-      <td>
-        <button class="btn btn-ghost btn-sm" onclick="abrirModalEmpresa('${e.id}')"><i class="ti ti-edit"></i></button>
-        <button class="btn btn-danger btn-sm" onclick="excluirEmpresa('${e.id}','${(e.nome||'').replace(/'/g,"")}')"><i class="ti ti-trash"></i></button>
-      </td>
-    </tr>`).join('') : `<tr><td colspan="4" class="empty-state">Nenhuma empresa encontrada.</td></tr>`;
+  return lista.length ? lista.map(e=>
+    '<tr class="clickable-row" onclick="abrirFuncionariosDaEmpresa(\'' + e.id + '\')">' +
+      '<td><strong>' + e.nome + '</strong></td>' +
+      '<td>' + (e.cnpj || '—') + '</td>' +
+      '<td>' + funcionarios.filter(f=>f.empresa_id===e.id).length + '</td>' +
+      '<td onclick="event.stopPropagation()" class="acao-editor">' +
+        '<button class="btn btn-ghost btn-sm" onclick="abrirModalEmpresa(\'' + e.id + '\')"><i class="ti ti-edit"></i></button>' +
+        '<button class="btn btn-danger btn-sm" onclick="excluirEmpresa(\'' + e.id + '\',\'' + (e.nome||'').replace(/'/g,'') + '\')"><i class="ti ti-trash"></i></button>' +
+      '</td>' +
+    '</tr>').join('') : '<tr><td colspan="4" class="empty-state">Nenhuma empresa encontrada.</td></tr>';
 }
 
 function atualizarTabelaEmpresas(){
@@ -482,51 +514,37 @@ function atualizarTabelaEmpresas(){
 
 function renderEmpresas(){
   const linhas = gerarLinhasEmpresas(listaEmpresasFiltrada());
-
-  return `
-    <div class="panel">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:6px;">
-        <div>
-          <h2><i class="ti ti-building"></i> Empresas</h2>
-          <div class="desc">Cadastro das empresas atendidas pelo departamento pessoal.</div>
-        </div>
-        <button class="btn btn-vinho" onclick="abrirModalEmpresa()"><i class="ti ti-plus"></i> Nova empresa</button>
-      </div>
-      <div class="row-flex" style="margin-bottom:14px;">
-        <div class="field" style="max-width:320px;">
-          <label>Buscar por nome</label>
-          <input id="buscaEmpresaInput" type="text" value="${buscaEmpresa}" placeholder="Digite o nome da empresa" oninput="buscaEmpresa=this.value; atualizarTabelaEmpresas();" />
-        </div>
-      </div>
-      <table>
-        <thead><tr><th>Nome</th><th>CNPJ</th><th>Funcionários</th><th>Ações</th></tr></thead>
-        <tbody id="empresaTbody">${linhas}</tbody>
-      </table>
-    </div>
-  `;
+  return '' +
+    '<div class="panel">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:6px;">' +
+        '<div><h2><i class="ti ti-building"></i> Empresas</h2>' +
+        '<div class="desc">Cadastro das empresas atendidas pelo departamento pessoal. Clique numa empresa para ver seus funcionários.</div></div>' +
+        '<button class="btn btn-vinho acao-editor" onclick="abrirModalEmpresa()"><i class="ti ti-plus"></i> Nova empresa</button>' +
+      '</div>' +
+      '<div class="row-flex" style="margin-bottom:14px;">' +
+        '<div class="field" style="max-width:320px;"><label>Buscar por nome</label>' +
+        '<input id="buscaEmpresaInput" type="text" value="' + buscaEmpresa + '" placeholder="Digite o nome da empresa" oninput="buscaEmpresa=this.value; atualizarTabelaEmpresas();" /></div>' +
+      '</div>' +
+      '<table><thead><tr><th>Nome</th><th>CNPJ</th><th>Funcionários</th><th>Ações</th></tr></thead>' +
+      '<tbody id="empresaTbody">' + linhas + '</tbody></table>' +
+    '</div>';
 }
 
 function abrirModalEmpresa(id){
   const e = id ? empresas.find(x=>x.id===id) : null;
-  document.getElementById('modalBody').innerHTML = `
-    <h3>${e ? 'Editar empresa' : 'Nova empresa'}</h3>
-    <div class="field" style="margin-bottom:12px;">
-      <label>Nome da empresa</label>
-      <input id="fEmpNome" value="${e ? e.nome : ''}" placeholder="Ex: Padaria Bom Pão Ltda" />
-    </div>
-    <div class="field">
-      <label>CNPJ</label>
-      <input id="fEmpCnpj" value="${e ? (e.cnpj||'') : ''}" placeholder="00.000.000/0000-00" />
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
-      <button class="btn btn-vinho" onclick="salvarEmpresa('${id||''}')"><i class="ti ti-check"></i> Salvar</button>
-    </div>
-  `;
+  document.getElementById('modalBody').innerHTML = '' +
+    '<h3>' + (e ? 'Editar empresa' : 'Nova empresa') + '</h3>' +
+    '<div class="field" style="margin-bottom:12px;"><label>Nome da empresa</label>' +
+    '<input id="fEmpNome" value="' + (e ? e.nome : '') + '" placeholder="Ex: Padaria Bom Pão Ltda" /></div>' +
+    '<div class="field"><label>CNPJ</label>' +
+    '<input id="fEmpCnpj" value="' + (e ? (e.cnpj||'') : '') + '" placeholder="00.000.000/0000-00" /></div>' +
+    '<div class="modal-actions"><button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>' +
+    '<button class="btn btn-vinho" onclick="salvarEmpresa(\'' + (id||'') + '\')"><i class="ti ti-check"></i> Salvar</button></div>';
   document.getElementById('modalBg').classList.add('show');
 }
 
 async function salvarEmpresa(id){
+  if(modoSomenteLeitura){ toast('Você está no modo apenas visualização', false); return; }
   const nome = document.getElementById('fEmpNome').value.trim();
   const cnpj = document.getElementById('fEmpCnpj').value.trim();
   if(!nome){ toast('Informe o nome da empresa', false); return; }
@@ -540,13 +558,13 @@ async function salvarEmpresa(id){
 }
 
 async function excluirEmpresa(id, nome){
-  if(!confirm(`Excluir "${nome}"? Os funcionários vinculados também poderão ficar sem empresa.`)) return;
+  if(modoSomenteLeitura){ toast('Você está no modo apenas visualização', false); return; }
+  if(!confirm('Excluir "' + nome + '"? Os funcionários vinculados também poderão ficar sem empresa.')) return;
   syncBadge('loading');
   try{ await apiDelete('empresas', id); toast('Empresa excluída'); await loadData(); }
   catch(e){ syncBadge('err'); toast('Erro ao excluir', false); }
 }
 
-/* ---------------- Tab: Funcionários ---------------- */
 function listaFuncionariosFiltrada(){
   const termo = buscaFuncionario.trim().toLowerCase();
   return funcionarios.filter(f=>
@@ -558,23 +576,24 @@ function listaFuncionariosFiltrada(){
 function gerarLinhasFuncionarios(lista){
   return lista.length ? lista.map(f=>{
     const diasF = diasAte(f.ferias_vencimento);
-    const stF = statusFerias(diasF);
-    const sfInfo = f.salario_familia
-      ? `Sim &middot; cessa ${formatarData(f.salario_familia_cessa)}`
-      : 'Não';
-    return `
-    <tr>
-      <td><strong>${f.nome}</strong><div style="font-size:11px;color:var(--texto-suave)">${empresaNome(f.empresa_id)}</div></td>
-      <td>R$ ${(parseFloat(f.salario)||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
-      <td class="sans" style="font-size:12.5px;">${sfInfo}</td>
-      <td>${formatarData(f.ferias_vencimento)}</td>
-      <td><span class="pill pill-${stF.cor}">${stF.texto}</span></td>
-      <td>
-        <button class="btn btn-ghost btn-sm" onclick="abrirModalFuncionario('${f.id}')"><i class="ti ti-edit"></i></button>
-        <button class="btn btn-danger btn-sm" onclick="excluirFuncionario('${f.id}','${(f.nome||'').replace(/'/g,"")}')"><i class="ti ti-trash"></i></button>
-      </td>
-    </tr>`;
-  }).join('') : `<tr><td colspan="6" class="empty-state">Nenhum funcionário encontrado.</td></tr>`;
+    const inativo = f.ativo===false;
+    const stF = inativo ? {cor:'gray', texto:'—'} : statusFerias(diasF);
+    const sfBadge = f.salario_familia ? '<span class="badge-inline" title="Recebe salário família">SF</span>' : '';
+    const fgtsBadge = f.possui_emprestimo_fgts ? '<span class="badge-inline" title="Possui empréstimo do FGTS">FGTS</span>' : '';
+    const situacao = inativo
+      ? ('<span class="pill pill-gray">Inativo' + (f.data_demissao ? ' desde '+formatarData(f.data_demissao) : '') + '</span>')
+      : '<span class="pill pill-green">Ativo</span>';
+    return '<tr class="' + (inativo?'linha-inativa':'') + '">' +
+      '<td><strong>' + f.nome + '</strong>' + sfBadge + fgtsBadge +
+      '<div style="font-size:11px;color:var(--texto-suave)">' + empresaNome(f.empresa_id) + '</div></td>' +
+      '<td class="sans" style="font-size:12.5px;">' + (f.setor || '—') + '</td>' +
+      '<td>' + formatarMoeda(f.salario) + '</td>' +
+      '<td>' + situacao + '</td>' +
+      '<td><span class="pill pill-' + stF.cor + '">' + stF.texto + '</span></td>' +
+      '<td class="acao-editor"><button class="btn btn-ghost btn-sm" onclick="abrirModalFuncionario(\'' + f.id + '\')"><i class="ti ti-edit"></i></button>' +
+      '<button class="btn btn-danger btn-sm" onclick="excluirFuncionario(\'' + f.id + '\',\'' + (f.nome||'').replace(/'/g,'') + '\')"><i class="ti ti-trash"></i></button></td>' +
+    '</tr>';
+  }).join('') : '<tr><td colspan="6" class="empty-state">Nenhum funcionário encontrado.</td></tr>';
 }
 
 function atualizarTabelaFuncionarios(){
@@ -584,105 +603,179 @@ function atualizarTabelaFuncionarios(){
 }
 
 function renderFuncionarios(){
-  const opcoesEmpresa = empresas.map(e=>`<option value="${e.id}" ${filtroEmpresaId===e.id?'selected':''}>${e.nome}</option>`).join('');
+  const opcoesEmpresa = empresas.map(e=>'<option value="'+e.id+'" '+(filtroEmpresaId===e.id?'selected':'')+'>'+e.nome+'</option>').join('');
   const linhas = gerarLinhasFuncionarios(listaFuncionariosFiltrada());
+  const empresaAtual = filtroEmpresaId ? empresaNome(filtroEmpresaId) : '';
 
-  return `
-    <div class="panel">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:10px;">
-        <div>
-          <h2><i class="ti ti-users"></i> Funcionários</h2>
-          <div class="desc">Cadastro de salário, salário família e vencimento de férias.</div>
-        </div>
-        <button class="btn btn-vinho" onclick="abrirModalFuncionario()"><i class="ti ti-plus"></i> Novo funcionário</button>
-      </div>
-      <div class="row-flex" style="margin-bottom:14px;">
-        <div class="field" style="max-width:280px;">
-          <label>Buscar por nome</label>
-          <input id="buscaFuncionarioInput" type="text" value="${buscaFuncionario}" placeholder="Digite o nome do funcionário" oninput="buscaFuncionario=this.value; atualizarTabelaFuncionarios();" />
-        </div>
-        <div class="field" style="max-width:260px;">
-          <label>Filtrar por empresa</label>
-          <select id="empresaFiltro" onchange="filtroEmpresaId=this.value; atualizarTabelaFuncionarios();">
-            <option value="">Todas as empresas</option>
-            ${opcoesEmpresa}
-          </select>
-        </div>
-      </div>
-      <table>
-        <thead><tr><th>Funcionário</th><th>Salário</th><th>Salário família</th><th>Vencimento férias</th><th>Status</th><th>Ações</th></tr></thead>
-        <tbody id="funcTbody">${linhas}</tbody>
-      </table>
-    </div>
-  `;
+  return '' +
+    '<div class="panel">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:10px;">' +
+        '<div><h2><i class="ti ti-users"></i> Funcionários ' + (empresaAtual ? '<span class="badge-inline">'+empresaAtual+'</span>':'') + '</h2>' +
+        '<div class="desc">Cadastro completo: salário, benefícios, situação e férias.</div></div>' +
+        '<button class="btn btn-vinho acao-editor" onclick="abrirModalFuncionario()"><i class="ti ti-plus"></i> Novo funcionário</button>' +
+      '</div>' +
+      '<div class="row-flex" style="margin-bottom:14px;">' +
+        '<div class="field" style="max-width:280px;"><label>Buscar por nome</label>' +
+        '<input id="buscaFuncionarioInput" type="text" value="'+buscaFuncionario+'" placeholder="Digite o nome do funcionário" oninput="buscaFuncionario=this.value; atualizarTabelaFuncionarios();" /></div>' +
+        '<div class="field" style="max-width:260px;"><label>Filtrar por empresa</label>' +
+        '<select id="empresaFiltro" onchange="filtroEmpresaId=this.value; atualizarTabelaFuncionarios();"><option value="">Todas as empresas</option>'+opcoesEmpresa+'</select></div>' +
+      '</div>' +
+      '<table><thead><tr><th>Funcionário</th><th>Setor</th><th>Salário</th><th>Situação</th><th>Férias</th><th>Ações</th></tr></thead>' +
+      '<tbody id="funcTbody">' + linhas + '</tbody></table>' +
+    '</div>';
 }
 
 function abrirModalFuncionario(id){
   const f = id ? funcionarios.find(x=>x.id===id) : null;
-  const opcoesEmpresa = empresas.map(e=>`<option value="${e.id}" ${f && f.empresa_id===e.id?'selected':''}>${e.nome}</option>`).join('');
+  const opcoesEmpresa = empresas.map(e=>{
+    const sel = (f && f.empresa_id===e.id) || (!f && filtroEmpresaId===e.id) ? 'selected':'';
+    return '<option value="'+e.id+'" '+sel+'>'+e.nome+'</option>';
+  }).join('');
 
   if(empresas.length===0){
     toast('Cadastre uma empresa antes de adicionar funcionários', false);
     return;
   }
 
-  document.getElementById('modalBody').innerHTML = `
-    <h3>${f ? 'Editar funcionário' : 'Novo funcionário'}</h3>
-    <div class="row-flex" style="margin-bottom:12px;">
-      <div class="field">
-        <label>Empresa</label>
-        <select id="fFuncEmpresa">${opcoesEmpresa}</select>
-      </div>
-      <div class="field">
-        <label>Nome do funcionário</label>
-        <input id="fFuncNome" value="${f ? f.nome : ''}" placeholder="Nome completo" />
-      </div>
-    </div>
-    <div class="row-flex" style="margin-bottom:12px;">
-      <div class="field">
-        <label>Salário</label>
-        <input id="fFuncSalario" type="number" step="0.01" value="${f ? f.salario||'' : ''}" placeholder="0,00" />
-      </div>
-      <div class="field">
-        <label>Vencimento das férias</label>
-        <input id="fFuncFerias" type="date" value="${f ? f.ferias_vencimento||'' : ''}" />
-      </div>
-    </div>
-    <div class="checkbox-field" style="margin-bottom:12px;">
-      <input type="checkbox" id="fFuncTemSF" ${f && f.salario_familia ? 'checked':''} onchange="toggleCamposSF(this.checked)" />
-      <label for="fFuncTemSF">Recebe salário família</label>
-    </div>
-    <div class="row-flex" id="camposSF" style="display:${f && f.salario_familia ? 'flex':'none'}; margin-bottom:12px;">
-      <div class="field">
-        <label>Valor do salário família</label>
-        <input id="fFuncSFValor" type="number" step="0.01" value="${f ? f.salario_familia_valor||'' : ''}" placeholder="0,00" />
-      </div>
-      <div class="field">
-        <label>Data de cessação</label>
-        <input id="fFuncSFCessa" type="date" value="${f ? f.salario_familia_cessa||'' : ''}" />
-      </div>
-    </div>
-    <div class="field">
-      <label>Observações</label>
-      <textarea id="fFuncObs" rows="2" placeholder="Anotações gerais">${f ? f.obs||'' : ''}</textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
-      <button class="btn btn-vinho" onclick="salvarFuncionario('${id||''}')"><i class="ti ti-check"></i> Salvar</button>
-    </div>
-  `;
+  tempHistoricoSalarial = f ? JSON.parse(JSON.stringify(f.historico_salarial || [])) : [];
+  const ativo = f ? f.ativo !== false : true;
+  const periodoInicio = f ? (f.periodo_aquisitivo_inicio || f.data_admissao || '') : '';
+  const vencimentoPreview = periodoInicio ? formatarData(somarAnos(periodoInicio,1)) : '—';
+
+  document.getElementById('modalBody').innerHTML = '' +
+    '<h3>' + (f ? 'Editar funcionário' : 'Novo funcionário') + '</h3>' +
+
+    '<div class="row-flex" style="margin-bottom:12px;">' +
+      '<div class="field"><label>Empresa</label><select id="fFuncEmpresa">'+opcoesEmpresa+'</select></div>' +
+      '<div class="field"><label>Nome do funcionário</label><input id="fFuncNome" value="'+(f?f.nome:'')+'" placeholder="Nome completo" /></div>' +
+    '</div>' +
+    '<div class="row-flex" style="margin-bottom:12px;">' +
+      '<div class="field"><label>Setor</label><select id="fFuncSetor">' +
+        '<option value="" '+((!f||!f.setor)?'selected':'')+'>Não informado</option>' +
+        '<option value="Comercial" '+(f&&f.setor==='Comercial'?'selected':'')+'>Comercial</option>' +
+        '<option value="Industrial" '+(f&&f.setor==='Industrial'?'selected':'')+'>Industrial</option>' +
+      '</select></div>' +
+      '<div class="field"><label>Data de admissão</label><input id="fFuncAdmissao" type="date" value="'+(f?f.data_admissao||'':'')+'" /></div>' +
+    '</div>' +
+
+    '<div class="subsection-title"><i class="ti ti-id-badge-2"></i> Situação</div>' +
+    '<div class="checkbox-field" style="margin-bottom:10px;">' +
+      '<input type="checkbox" id="fFuncAtivo" '+(ativo?'checked':'')+' onchange="toggleCampoDemissao(this.checked)" />' +
+      '<label for="fFuncAtivo">Funcionário ativo (desmarque se foi desligado)</label>' +
+    '</div>' +
+    '<div class="row-flex" id="campoDemissao" style="display:'+(ativo?'none':'flex')+'; margin-bottom:10px;">' +
+      '<div class="field"><label>Data de demissão</label><input id="fFuncDataDemissao" type="date" value="'+(f?f.data_demissao||'':'')+'" /></div>' +
+    '</div>' +
+    '<div class="checkbox-field" style="margin-bottom:12px;">' +
+      '<input type="checkbox" id="fFuncFgts" '+(f&&f.possui_emprestimo_fgts?'checked':'')+' />' +
+      '<label for="fFuncFgts">Possui empréstimo do FGTS</label>' +
+    '</div>' +
+
+    '<div class="subsection-title"><i class="ti ti-cash"></i> Remuneração</div>' +
+    '<div class="row-flex" style="margin-bottom:10px;">' +
+      '<div class="field"><label>Salário atual</label><input id="fFuncSalario" type="number" step="0.01" value="'+(f?f.salario||'':'')+'" placeholder="0,00" /></div>' +
+      '<div class="field"><label>Adiantamento fixo em folha</label><input id="fFuncAdiantamento" type="number" step="0.01" value="'+(f&&f.adiantamento_fixo!=null?f.adiantamento_fixo:'')+'" placeholder="Opcional" /></div>' +
+    '</div>' +
+    '<div class="row-flex" style="margin-bottom:14px;">' +
+      '<div class="field"><label>Insalubridade (%)</label><input id="fFuncInsalubridade" type="number" step="0.01" value="'+(f&&f.insalubridade_percentual!=null?f.insalubridade_percentual:'')+'" placeholder="Ex: 20" /></div>' +
+      '<div class="field checkbox-field" style="align-items:center; padding-top:22px;">' +
+        '<input type="checkbox" id="fFuncPericulosidade" '+(f&&f.periculosidade?'checked':'')+' />' +
+        '<label for="fFuncPericulosidade">Recebe periculosidade</label>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="subsection-title"><i class="ti ti-history"></i> Alterações salariais</div>' +
+    '<div id="histSalarialLista">'+renderHistoricoSalarialSection()+'</div>' +
+    '<div class="row-flex" style="margin-bottom:4px;">' +
+      '<div class="field"><label>Data</label><input id="fHistData" type="date" /></div>' +
+      '<div class="field"><label>Novo valor</label><input id="fHistValor" type="number" step="0.01" placeholder="0,00" /></div>' +
+      '<div class="field"><label>Motivo</label><input id="fHistMotivo" type="text" placeholder="Ex: Dissídio, promoção..." /></div>' +
+    '</div>' +
+    '<button class="btn btn-ghost btn-sm" style="margin-bottom:16px;" onclick="adicionarHistoricoSalarial()"><i class="ti ti-plus"></i> Adicionar ao histórico</button>' +
+
+    '<div class="subsection-title"><i class="ti ti-heart-handshake"></i> Salário família</div>' +
+    '<div class="checkbox-field" style="margin-bottom:12px;">' +
+      '<input type="checkbox" id="fFuncTemSF" '+(f&&f.salario_familia?'checked':'')+' onchange="toggleCamposSF(this.checked)" />' +
+      '<label for="fFuncTemSF">Recebe salário família</label>' +
+    '</div>' +
+    '<div class="row-flex" id="camposSF" style="display:'+(f&&f.salario_familia?'flex':'none')+'; margin-bottom:14px;">' +
+      '<div class="field"><label>Valor do salário família</label><input id="fFuncSFValor" type="number" step="0.01" value="'+(f?f.salario_familia_valor||'':'')+'" placeholder="0,00" /></div>' +
+      '<div class="field"><label>Data de cessação</label><input id="fFuncSFCessa" type="date" value="'+(f?f.salario_familia_cessa||'':'')+'" /></div>' +
+    '</div>' +
+
+    '<div class="subsection-title"><i class="ti ti-beach"></i> Férias</div>' +
+    '<div class="row-flex" style="margin-bottom:6px;">' +
+      '<div class="field"><label>Início do período aquisitivo</label><input id="fFuncPeriodoInicio" type="date" value="'+periodoInicio+'" oninput="atualizarVencimentoPreview()" /></div>' +
+      '<div class="field"><label>Vencimento das férias</label><div class="vencimento-preview" id="vencimentoPreview">'+vencimentoPreview+'</div></div>' +
+    '</div>' +
+    '<div class="checkbox-field" style="margin-bottom:8px;">' +
+      '<input type="checkbox" id="fFuncLancarFerias" onchange="toggleDataLancamento(this.checked)" />' +
+      '<label for="fFuncLancarFerias">Lançar férias agora (avança para o próximo período automaticamente)</label>' +
+    '</div>' +
+    '<div class="row-flex" id="campoDataLancamento" style="display:none; margin-bottom:6px;">' +
+      '<div class="field"><label>Data em que as férias foram lançadas</label><input id="fFuncDataLancamento" type="date" /></div>' +
+    '</div>' +
+    '<div class="hint-text" style="margin-bottom:14px;">Ao salvar com essa opção marcada, o período aquisitivo avança 1 ano e um novo vencimento é calculado.</div>' +
+
+    '<div class="field"><label>Observações</label><textarea id="fFuncObs" rows="2" placeholder="Anotações gerais">'+(f?f.obs||'':'')+'</textarea></div>' +
+    '<div class="modal-actions"><button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>' +
+    '<button class="btn btn-vinho" onclick="salvarFuncionario(\''+(id||'')+'\')"><i class="ti ti-check"></i> Salvar</button></div>';
+
   document.getElementById('modalBg').classList.add('show');
 }
 
+function renderHistoricoSalarialSection(){
+  if(!tempHistoricoSalarial.length) return '<div class="empty-state" style="padding:10px;">Nenhuma alteração registrada.</div>';
+  const ordenado = tempHistoricoSalarial.slice().sort((a,b)=> (b.data||'').localeCompare(a.data||''));
+  return ordenado.map(h=>
+    '<div class="hist-item"><span>'+formatarData(h.data)+(h.motivo?' &middot; '+h.motivo:'')+'</span>' +
+    '<span class="val">'+formatarMoeda(h.valor)+'</span></div>'
+  ).join('');
+}
+
+function adicionarHistoricoSalarial(){
+  const data = document.getElementById('fHistData').value;
+  const valor = parseFloat(document.getElementById('fHistValor').value);
+  const motivo = document.getElementById('fHistMotivo').value.trim();
+  if(!data || !valor){ toast('Informe a data e o novo valor do salário', false); return; }
+  tempHistoricoSalarial.push({data, valor, motivo});
+  document.getElementById('fFuncSalario').value = valor;
+  document.getElementById('fHistData').value='';
+  document.getElementById('fHistValor').value='';
+  document.getElementById('fHistMotivo').value='';
+  document.getElementById('histSalarialLista').innerHTML = renderHistoricoSalarialSection();
+  toast('Alteração salarial adicionada! Salário atual atualizado.');
+}
+
+function toggleCampoDemissao(checked){
+  document.getElementById('campoDemissao').style.display = checked ? 'none' : 'flex';
+}
 function toggleCamposSF(checked){
   document.getElementById('camposSF').style.display = checked ? 'flex' : 'none';
 }
+function toggleDataLancamento(checked){
+  document.getElementById('campoDataLancamento').style.display = checked ? 'flex' : 'none';
+}
+function atualizarVencimentoPreview(){
+  const periodo = document.getElementById('fFuncPeriodoInicio').value;
+  document.getElementById('vencimentoPreview').textContent = periodo ? formatarData(somarAnos(periodo,1)) : '—';
+}
 
 async function salvarFuncionario(id){
+  if(modoSomenteLeitura){ toast('Você está no modo apenas visualização', false); return; }
   const empresa_id = document.getElementById('fFuncEmpresa').value;
   const nome = document.getElementById('fFuncNome').value.trim();
+  const setor = document.getElementById('fFuncSetor').value || null;
+  const data_admissao = document.getElementById('fFuncAdmissao').value || null;
+  const ativo = document.getElementById('fFuncAtivo').checked;
+  const data_demissao = ativo ? null : (document.getElementById('fFuncDataDemissao').value || null);
+  const possui_emprestimo_fgts = document.getElementById('fFuncFgts').checked;
   const salario = parseFloat(document.getElementById('fFuncSalario').value) || 0;
-  const ferias_vencimento = document.getElementById('fFuncFerias').value || null;
+  const adiantamentoRaw = document.getElementById('fFuncAdiantamento').value;
+  const adiantamento_fixo = adiantamentoRaw ? parseFloat(adiantamentoRaw) : null;
+  const insalubridadeRaw = document.getElementById('fFuncInsalubridade').value;
+  const insalubridade_percentual = insalubridadeRaw ? parseFloat(insalubridadeRaw) : null;
+  const periculosidade = document.getElementById('fFuncPericulosidade').checked;
   const salario_familia = document.getElementById('fFuncTemSF').checked;
   const salario_familia_valor = salario_familia ? (parseFloat(document.getElementById('fFuncSFValor').value) || 0) : null;
   const salario_familia_cessa = salario_familia ? (document.getElementById('fFuncSFCessa').value || null) : null;
@@ -691,20 +784,42 @@ async function salvarFuncionario(id){
   if(!nome){ toast('Informe o nome do funcionário', false); return; }
   if(!empresa_id){ toast('Selecione a empresa', false); return; }
 
-  const payload = { empresa_id, nome, salario, ferias_vencimento, salario_familia, salario_familia_valor, salario_familia_cessa, obs };
+  const antigo = id ? funcionarios.find(x=>x.id===id) : null;
 
-  // se a data de vencimento mudou, tira a marcação de "revisado" para o alerta voltar a aparecer
-  if(id){
-    const antigo = funcionarios.find(x=>x.id===id);
-    if(antigo){
-      if(antigo.ferias_vencimento !== ferias_vencimento) payload.ferias_revisado = false;
-      if(antigo.salario_familia_cessa !== salario_familia_cessa) payload.salario_familia_revisado = false;
-    }
+  let periodoAtual = document.getElementById('fFuncPeriodoInicio').value || null;
+  let feriasHistorico = antigo ? (antigo.ferias_historico||[]).slice() : [];
+  let feriasVencimento = periodoAtual ? somarAnos(periodoAtual,1) : null;
+  let feriasRevisado = antigo ? antigo.ferias_revisado : false;
+
+  const lancar = document.getElementById('fFuncLancarFerias').checked;
+  const dataLancamentoEl = document.getElementById('fFuncDataLancamento');
+  const dataLancamento = dataLancamentoEl ? dataLancamentoEl.value : '';
+
+  if(lancar && dataLancamento && periodoAtual){
+    feriasHistorico.push({ periodo_inicio: periodoAtual, periodo_fim: feriasVencimento, data_lancamento: dataLancamento });
+    periodoAtual = feriasVencimento;
+    feriasVencimento = somarAnos(periodoAtual,1);
+    feriasRevisado = false;
+  } else if(antigo && periodoAtual !== (antigo.periodo_aquisitivo_inicio || antigo.data_admissao || null)){
+    feriasRevisado = false;
   }
+
+  const payload = {
+    empresa_id: empresa_id, nome: nome, setor: setor, data_admissao: data_admissao, ativo: ativo,
+    data_demissao: data_demissao, possui_emprestimo_fgts: possui_emprestimo_fgts,
+    salario: salario, adiantamento_fixo: adiantamento_fixo, insalubridade_percentual: insalubridade_percentual,
+    periculosidade: periculosidade, historico_salarial: tempHistoricoSalarial,
+    salario_familia: salario_familia, salario_familia_valor: salario_familia_valor, salario_familia_cessa: salario_familia_cessa,
+    periodo_aquisitivo_inicio: periodoAtual, ferias_vencimento: feriasVencimento,
+    ferias_historico: feriasHistorico, ferias_revisado: feriasRevisado,
+    obs: obs
+  };
+
+  if(antigo && antigo.salario_familia_cessa !== salario_familia_cessa) payload.salario_familia_revisado = false;
 
   syncBadge('loading');
   try{
-    if(id){ await apiPut('funcionarios', {id, ...payload}); toast('Funcionário atualizado!'); }
+    if(id){ await apiPut('funcionarios', Object.assign({id:id}, payload)); toast('Funcionário atualizado!'); }
     else { await apiPost('funcionarios', payload); toast('Funcionário cadastrado!'); }
     fecharModal();
     await loadData();
@@ -712,9 +827,123 @@ async function salvarFuncionario(id){
 }
 
 async function excluirFuncionario(id, nome){
-  if(!confirm(`Excluir "${nome}"? Esta ação não pode ser desfeita.`)) return;
+  if(modoSomenteLeitura){ toast('Você está no modo apenas visualização', false); return; }
+  if(!confirm('Excluir "'+nome+'" definitivamente? Se preferir manter o histórico, edite o cadastro e marque como "inativo" em vez de excluir.')) return;
   syncBadge('loading');
   try{ await apiDelete('funcionarios', id); toast('Funcionário excluído'); await loadData(); }
+  catch(e){ syncBadge('err'); toast('Erro ao excluir', false); }
+}
+
+function listaContribuintesFiltrada(){
+  const termo = buscaContribuinte.trim().toLowerCase();
+  return contribuintes.filter(c=>
+    (!filtroEmpresaContribId || c.empresa_id===filtroEmpresaContribId) &&
+    (!termo || (c.nome||'').toLowerCase().includes(termo))
+  );
+}
+
+function gerarLinhasContribuintes(lista){
+  return lista.length ? lista.map(c=>{
+    const inativo = c.ativo===false;
+    const situacao = inativo ? '<span class="pill pill-gray">Inativo</span>' : '<span class="pill pill-green">Ativo</span>';
+    return '<tr class="'+(inativo?'linha-inativa':'')+'">' +
+      '<td><strong>'+c.nome+'</strong></td>' +
+      '<td class="sans" style="font-size:12.5px;">'+empresaNome(c.empresa_id)+'</td>' +
+      '<td>'+formatarMoeda(c.pro_labore)+'</td>' +
+      '<td>'+formatarData(c.data_inicio)+'</td>' +
+      '<td>'+situacao+'</td>' +
+      '<td class="acao-editor"><button class="btn btn-ghost btn-sm" onclick="abrirModalContribuinte(\''+c.id+'\')"><i class="ti ti-edit"></i></button>' +
+      '<button class="btn btn-danger btn-sm" onclick="excluirContribuinte(\''+c.id+'\',\''+(c.nome||'').replace(/'/g,'')+'\')"><i class="ti ti-trash"></i></button></td>' +
+    '</tr>';
+  }).join('') : '<tr><td colspan="6" class="empty-state">Nenhum contribuinte cadastrado ainda.</td></tr>';
+}
+
+function atualizarTabelaContribuintes(){
+  const tbody = document.getElementById('contribTbody');
+  if(!tbody) return;
+  tbody.innerHTML = gerarLinhasContribuintes(listaContribuintesFiltrada());
+}
+
+function renderContribuintes(){
+  const opcoesEmpresa = empresas.map(e=>'<option value="'+e.id+'" '+(filtroEmpresaContribId===e.id?'selected':'')+'>'+e.nome+'</option>').join('');
+  const linhas = gerarLinhasContribuintes(listaContribuintesFiltrada());
+
+  return '' +
+    '<div class="panel">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:10px;">' +
+        '<div><h2><i class="ti ti-briefcase"></i> Contribuintes</h2>' +
+        '<div class="desc">Empresários e sócios que recolhem pró-labore.</div></div>' +
+        '<button class="btn btn-vinho acao-editor" onclick="abrirModalContribuinte()"><i class="ti ti-plus"></i> Novo contribuinte</button>' +
+      '</div>' +
+      '<div class="row-flex" style="margin-bottom:14px;">' +
+        '<div class="field" style="max-width:280px;"><label>Buscar por nome</label>' +
+        '<input id="buscaContribuinteInput" type="text" value="'+buscaContribuinte+'" placeholder="Digite o nome" oninput="buscaContribuinte=this.value; atualizarTabelaContribuintes();" /></div>' +
+        '<div class="field" style="max-width:260px;"><label>Filtrar por empresa</label>' +
+        '<select id="empresaFiltroContrib" onchange="filtroEmpresaContribId=this.value; atualizarTabelaContribuintes();"><option value="">Todas as empresas</option>'+opcoesEmpresa+'</select></div>' +
+      '</div>' +
+      '<table><thead><tr><th>Nome</th><th>Empresa</th><th>Pró-labore</th><th>Início</th><th>Situação</th><th>Ações</th></tr></thead>' +
+      '<tbody id="contribTbody">' + linhas + '</tbody></table>' +
+    '</div>';
+}
+
+function abrirModalContribuinte(id){
+  const c = id ? contribuintes.find(x=>x.id===id) : null;
+  const opcoesEmpresa = empresas.map(e=>'<option value="'+e.id+'" '+(c&&c.empresa_id===e.id?'selected':'')+'>'+e.nome+'</option>').join('');
+
+  if(empresas.length===0){
+    toast('Cadastre uma empresa antes de adicionar contribuintes', false);
+    return;
+  }
+
+  document.getElementById('modalBody').innerHTML = '' +
+    '<h3>'+(c?'Editar contribuinte':'Novo contribuinte')+'</h3>' +
+    '<div class="row-flex" style="margin-bottom:12px;">' +
+      '<div class="field"><label>Empresa</label><select id="fContribEmpresa">'+opcoesEmpresa+'</select></div>' +
+      '<div class="field"><label>Nome do contribuinte</label><input id="fContribNome" value="'+(c?c.nome:'')+'" placeholder="Nome completo" /></div>' +
+    '</div>' +
+    '<div class="row-flex" style="margin-bottom:12px;">' +
+      '<div class="field"><label>Valor do pró-labore</label><input id="fContribProLabore" type="number" step="0.01" value="'+(c?c.pro_labore||'':'')+'" placeholder="0,00" /></div>' +
+      '<div class="field"><label>Data de início</label><input id="fContribDataInicio" type="date" value="'+(c?c.data_inicio||'':'')+'" /></div>' +
+    '</div>' +
+    '<div class="checkbox-field" style="margin-bottom:12px;">' +
+      '<input type="checkbox" id="fContribAtivo" '+((!c||c.ativo!==false)?'checked':'')+' />' +
+      '<label for="fContribAtivo">Contribuinte ativo</label>' +
+    '</div>' +
+    '<div class="field"><label>Observações</label><textarea id="fContribObs" rows="2" placeholder="Anotações gerais">'+(c?c.obs||'':'')+'</textarea></div>' +
+    '<div class="modal-actions"><button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>' +
+    '<button class="btn btn-vinho" onclick="salvarContribuinte(\''+(id||'')+'\')"><i class="ti ti-check"></i> Salvar</button></div>';
+
+  document.getElementById('modalBg').classList.add('show');
+}
+
+async function salvarContribuinte(id){
+  if(modoSomenteLeitura){ toast('Você está no modo apenas visualização', false); return; }
+  const empresa_id = document.getElementById('fContribEmpresa').value;
+  const nome = document.getElementById('fContribNome').value.trim();
+  const pro_labore = parseFloat(document.getElementById('fContribProLabore').value) || 0;
+  const data_inicio = document.getElementById('fContribDataInicio').value || null;
+  const ativo = document.getElementById('fContribAtivo').checked;
+  const obs = document.getElementById('fContribObs').value.trim();
+
+  if(!nome){ toast('Informe o nome do contribuinte', false); return; }
+  if(!empresa_id){ toast('Selecione a empresa', false); return; }
+
+  const payload = { empresa_id, nome, pro_labore, data_inicio, ativo, obs };
+
+  syncBadge('loading');
+  try{
+    if(id){ await apiPut('contribuintes', Object.assign({id:id}, payload)); toast('Contribuinte atualizado!'); }
+    else { await apiPost('contribuintes', payload); toast('Contribuinte cadastrado!'); }
+    fecharModal();
+    await loadData();
+  }catch(e){ syncBadge('err'); toast('Erro ao salvar contribuinte', false); }
+}
+
+async function excluirContribuinte(id, nome){
+  if(modoSomenteLeitura){ toast('Você está no modo apenas visualização', false); return; }
+  if(!confirm('Excluir "'+nome+'"? Esta ação não pode ser desfeita.')) return;
+  syncBadge('loading');
+  try{ await apiDelete('contribuintes', id); toast('Contribuinte excluído'); await loadData(); }
   catch(e){ syncBadge('err'); toast('Erro ao excluir', false); }
 }
 
