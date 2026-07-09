@@ -182,6 +182,15 @@
 
   select#empresaFiltro{ min-width:220px; }
   body.modo-leitura .acao-editor{ display:none !important; }
+  @media print{
+    body{ background:#fff; }
+    .topbar, .toast-wrap, .modal-bg, .btn, .row-flex, #avisoSomenteLeitura, .no-print{ display:none !important; }
+    main{ padding:0; max-width:100%; }
+    .panel{ box-shadow:none; border:none; padding:0; margin-bottom:26px; page-break-inside:avoid; }
+    table{ font-size:11px; }
+    thead th{ background:#f0ead9; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    input[type="date"], input[type="checkbox"]{ border:none; background:transparent; }
+  }
   @media (max-width:720px){
     .topbar{ padding:14px 16px; }
     .nav-tabs{ width:100%; overflow-x:auto; }
@@ -499,7 +508,7 @@ function gerarLinhasEmpresas(lista){
       '<td><strong>' + e.nome + '</strong></td>' +
       '<td>' + (e.cnpj || '—') + '</td>' +
       '<td>' + funcionarios.filter(f=>f.empresa_id===e.id).length + '</td>' +
-      '<td onclick="event.stopPropagation()" class="acao-editor">' +
+      '<td onclick="event.stopPropagation()" class="acao-editor no-print">' +
         '<button class="btn btn-ghost btn-sm" onclick="abrirModalEmpresa(\'' + e.id + '\')"><i class="ti ti-edit"></i></button>' +
         '<button class="btn btn-danger btn-sm" onclick="excluirEmpresa(\'' + e.id + '\',\'' + (e.nome||'').replace(/'/g,'') + '\')"><i class="ti ti-trash"></i></button>' +
       '</td>' +
@@ -519,13 +528,16 @@ function renderEmpresas(){
       '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:6px;">' +
         '<div><h2><i class="ti ti-building"></i> Empresas</h2>' +
         '<div class="desc">Cadastro das empresas atendidas pelo departamento pessoal. Clique numa empresa para ver seus funcionários.</div></div>' +
+        '<div style="display:flex; gap:8px;">' +
+        '<button class="btn btn-ghost" onclick="window.print()"><i class="ti ti-printer"></i> Imprimir / PDF</button>' +
         '<button class="btn btn-vinho acao-editor" onclick="abrirModalEmpresa()"><i class="ti ti-plus"></i> Nova empresa</button>' +
+        '</div>' +
       '</div>' +
-      '<div class="row-flex" style="margin-bottom:14px;">' +
+      '<div class="row-flex no-print" style="margin-bottom:14px;">' +
         '<div class="field" style="max-width:320px;"><label>Buscar por nome</label>' +
         '<input id="buscaEmpresaInput" type="text" value="' + buscaEmpresa + '" placeholder="Digite o nome da empresa" oninput="buscaEmpresa=this.value; atualizarTabelaEmpresas();" /></div>' +
       '</div>' +
-      '<table><thead><tr><th>Nome</th><th>CNPJ</th><th>Funcionários</th><th>Ações</th></tr></thead>' +
+      '<table><thead><tr><th>Nome</th><th>CNPJ</th><th>Funcionários</th><th class="no-print">Ações</th></tr></thead>' +
       '<tbody id="empresaTbody">' + linhas + '</tbody></table>' +
     '</div>';
 }
@@ -573,38 +585,101 @@ function listaFuncionariosFiltrada(){
   );
 }
 
+function abreviarSetor(setor){
+  if(setor==='Comercial') return 'COM';
+  if(setor==='Industrial') return 'IND';
+  return '—';
+}
+
 function gerarLinhasFuncionarios(lista){
   return lista.length ? lista.map(f=>{
-    const diasF = diasAte(f.ferias_vencimento);
     const inativo = f.ativo===false;
-    const stF = inativo ? {cor:'gray', texto:'—'} : statusFerias(diasF);
-    const sfBadge = f.salario_familia ? '<span class="badge-inline" title="Recebe salário família">SF</span>' : '';
-    const fgtsBadge = f.possui_emprestimo_fgts ? '<span class="badge-inline" title="Possui empréstimo do FGTS">FGTS</span>' : '';
     const situacao = inativo
       ? ('<span class="pill pill-gray">Inativo' + (f.data_demissao ? ' desde '+formatarData(f.data_demissao) : '') + '</span>')
       : '<span class="pill pill-green">Ativo</span>';
     return '<tr class="' + (inativo?'linha-inativa':'') + '">' +
-      '<td><strong>' + f.nome + '</strong>' + sfBadge + fgtsBadge +
-      '<div style="font-size:11px;color:var(--texto-suave)">' + empresaNome(f.empresa_id) + '</div></td>' +
-      '<td class="sans" style="font-size:12.5px;">' + (f.setor || '—') + '</td>' +
+      '<td><strong>' + f.nome + '</strong><div style="font-size:11px;color:var(--texto-suave)">' + empresaNome(f.empresa_id) + '</div></td>' +
+      '<td class="sans" style="font-size:12.5px;">' + formatarData(f.data_admissao) + '</td>' +
       '<td>' + formatarMoeda(f.salario) + '</td>' +
+      '<td class="sans" style="font-size:12.5px;">' + abreviarSetor(f.setor) + '</td>' +
+      '<td class="sans" style="font-size:12.5px;">' + (f.salario_familia ? 'Sim' : 'Não') + '</td>' +
+      '<td class="sans" style="font-size:12.5px;">' + (f.salario_familia ? formatarData(f.salario_familia_cessa) : '—') + '</td>' +
+      '<td class="sans" style="font-size:12px; max-width:180px;">' + (f.obs ? f.obs : '—') + '</td>' +
       '<td>' + situacao + '</td>' +
-      '<td><span class="pill pill-' + stF.cor + '">' + stF.texto + '</span></td>' +
-      '<td class="acao-editor"><button class="btn btn-ghost btn-sm" onclick="abrirModalFuncionario(\'' + f.id + '\')"><i class="ti ti-edit"></i></button>' +
+      '<td class="acao-editor no-print"><button class="btn btn-ghost btn-sm" onclick="abrirModalFuncionario(\'' + f.id + '\')"><i class="ti ti-edit"></i></button>' +
       '<button class="btn btn-danger btn-sm" onclick="excluirFuncionario(\'' + f.id + '\',\'' + (f.nome||'').replace(/'/g,'') + '\')"><i class="ti ti-trash"></i></button></td>' +
+    '</tr>';
+  }).join('') : '<tr><td colspan="9" class="empty-state">Nenhum funcionário encontrado.</td></tr>';
+}
+
+function gerarLinhasControleFerias(lista){
+  return lista.length ? lista.map(f=>{
+    const disabled = modoSomenteLeitura ? 'disabled' : '';
+    const dias = diasAte(f.ferias_vencimento);
+    const st = f.ativo===false ? {cor:'gray', texto:'—'} : statusFerias(dias);
+    return '<tr class="' + (f.ativo===false?'linha-inativa':'') + '">' +
+      '<td><strong>' + f.nome + '</strong><div style="font-size:11px;color:var(--texto-suave)">' + empresaNome(f.empresa_id) + '</div></td>' +
+      '<td><input type="date" class="sans no-print-input" style="min-width:140px;" value="' + (f.programacao_ferias||'') + '" ' + disabled + ' onchange="atualizarCampoFerias(\'' + f.id + '\',\'programacao_ferias\',this.value)" /></td>' +
+      '<td class="sans" style="font-size:12.5px;">' + formatarData(f.periodo_aquisitivo_inicio || f.data_admissao) + '</td>' +
+      '<td><span class="pill pill-' + st.cor + '">' + formatarData(f.ferias_vencimento) + '</span></td>' +
+      '<td><input type="date" class="sans no-print-input" style="min-width:140px;" value="" ' + disabled + ' onchange="lancarFeriasInline(\'' + f.id + '\',this.value)" /></td>' +
+      '<td style="text-align:center;"><input type="checkbox" style="width:18px;height:18px;" ' + (f.ferias_revisado?'checked':'') + ' ' + disabled + ' onchange="marcarRevisado(\'' + f.id + '\',\'ferias\',this.checked)" /></td>' +
     '</tr>';
   }).join('') : '<tr><td colspan="6" class="empty-state">Nenhum funcionário encontrado.</td></tr>';
 }
 
 function atualizarTabelaFuncionarios(){
+  const lista = listaFuncionariosFiltrada();
   const tbody = document.getElementById('funcTbody');
-  if(!tbody) return;
-  tbody.innerHTML = gerarLinhasFuncionarios(listaFuncionariosFiltrada());
+  if(tbody) tbody.innerHTML = gerarLinhasFuncionarios(lista);
+  const tbodyFerias = document.getElementById('feriasTbody');
+  if(tbodyFerias) tbodyFerias.innerHTML = gerarLinhasControleFerias(lista);
+}
+
+async function atualizarCampoFerias(funcId, campo, valor){
+  if(modoSomenteLeitura){ toast('Você está no modo apenas visualização', false); return; }
+  syncBadge('loading');
+  try{
+    const body = {id: funcId};
+    body[campo] = valor || null;
+    await apiPut('funcionarios', body);
+    toast('Atualizado!');
+    await loadData();
+  }catch(e){ syncBadge('err'); toast('Erro ao atualizar', false); }
+}
+
+async function lancarFeriasInline(funcId, dataLancamento){
+  if(modoSomenteLeitura){ toast('Você está no modo apenas visualização', false); return; }
+  if(!dataLancamento) return;
+  const f = funcionarios.find(x=>x.id===funcId);
+  if(!f) return;
+  let periodoAtual = f.periodo_aquisitivo_inicio || f.data_admissao || null;
+  if(!periodoAtual){ toast('Informe o período aquisitivo ou a data de admissão antes de lançar as férias', false); return; }
+  let feriasVencimento = somarAnos(periodoAtual,1);
+  const feriasHistorico = (f.ferias_historico||[]).slice();
+  feriasHistorico.push({ periodo_inicio: periodoAtual, periodo_fim: feriasVencimento, data_lancamento: dataLancamento });
+  const novoPeriodo = feriasVencimento;
+  const novoVencimento = somarAnos(novoPeriodo,1);
+
+  syncBadge('loading');
+  try{
+    await apiPut('funcionarios', {
+      id: funcId,
+      periodo_aquisitivo_inicio: novoPeriodo,
+      ferias_vencimento: novoVencimento,
+      ferias_historico: feriasHistorico,
+      ferias_revisado: false
+    });
+    toast('Férias lançadas! Período avançado para o próximo ciclo.');
+    await loadData();
+  }catch(e){ syncBadge('err'); toast('Erro ao lançar férias', false); }
 }
 
 function renderFuncionarios(){
   const opcoesEmpresa = empresas.map(e=>'<option value="'+e.id+'" '+(filtroEmpresaId===e.id?'selected':'')+'>'+e.nome+'</option>').join('');
-  const linhas = gerarLinhasFuncionarios(listaFuncionariosFiltrada());
+  const lista = listaFuncionariosFiltrada();
+  const linhas = gerarLinhasFuncionarios(lista);
+  const linhasFerias = gerarLinhasControleFerias(lista);
   const empresaAtual = filtroEmpresaId ? empresaNome(filtroEmpresaId) : '';
 
   return '' +
@@ -612,16 +687,30 @@ function renderFuncionarios(){
       '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:10px;">' +
         '<div><h2><i class="ti ti-users"></i> Funcionários ' + (empresaAtual ? '<span class="badge-inline">'+empresaAtual+'</span>':'') + '</h2>' +
         '<div class="desc">Cadastro completo: salário, benefícios, situação e férias.</div></div>' +
+        '<div style="display:flex; gap:8px;">' +
+        '<button class="btn btn-ghost" onclick="window.print()"><i class="ti ti-printer"></i> Imprimir / PDF</button>' +
         '<button class="btn btn-vinho acao-editor" onclick="abrirModalFuncionario()"><i class="ti ti-plus"></i> Novo funcionário</button>' +
+        '</div>' +
       '</div>' +
-      '<div class="row-flex" style="margin-bottom:14px;">' +
+      '<div class="row-flex no-print" style="margin-bottom:14px;">' +
         '<div class="field" style="max-width:280px;"><label>Buscar por nome</label>' +
         '<input id="buscaFuncionarioInput" type="text" value="'+buscaFuncionario+'" placeholder="Digite o nome do funcionário" oninput="buscaFuncionario=this.value; atualizarTabelaFuncionarios();" /></div>' +
         '<div class="field" style="max-width:260px;"><label>Filtrar por empresa</label>' +
         '<select id="empresaFiltro" onchange="filtroEmpresaId=this.value; atualizarTabelaFuncionarios();"><option value="">Todas as empresas</option>'+opcoesEmpresa+'</select></div>' +
       '</div>' +
-      '<table><thead><tr><th>Funcionário</th><th>Setor</th><th>Salário</th><th>Situação</th><th>Férias</th><th>Ações</th></tr></thead>' +
+      '<div style="overflow-x:auto;">' +
+      '<table><thead><tr><th>Nome</th><th>Admissão</th><th>Salário</th><th>Ind/Com</th><th>Salário Família</th><th>Salário F. Fim</th><th>Observação</th><th>Situação</th><th class="no-print">Ações</th></tr></thead>' +
       '<tbody id="funcTbody">' + linhas + '</tbody></table>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="panel">' +
+      '<h2><i class="ti ti-beach"></i> Controle de Férias</h2>' +
+      '<div class="desc">Programe a data de gozo, acompanhe o período aquisitivo e o limite, e marque "OK" quando já tiver lançado no seu programa contábil.</div>' +
+      '<div style="overflow-x:auto;">' +
+      '<table><thead><tr><th>Nome</th><th>Programação</th><th>Período Aquisitivo</th><th>Limite p/Gozo</th><th>Lançamento</th><th style="text-align:center;">OK</th></tr></thead>' +
+      '<tbody id="feriasTbody">' + linhasFerias + '</tbody></table>' +
+      '</div>' +
     '</div>';
 }
 
@@ -705,6 +794,9 @@ function abrirModalFuncionario(id){
 
     '<div class="subsection-title"><i class="ti ti-beach"></i> Férias</div>' +
     '<div class="row-flex" style="margin-bottom:6px;">' +
+      '<div class="field"><label>Programação (data planejada para gozo)</label><input id="fFuncProgramacao" type="date" value="'+(f?f.programacao_ferias||'':'')+'" /></div>' +
+    '</div>' +
+    '<div class="row-flex" style="margin-bottom:6px;">' +
       '<div class="field"><label>Início do período aquisitivo</label><input id="fFuncPeriodoInicio" type="date" value="'+periodoInicio+'" oninput="atualizarVencimentoPreview()" /></div>' +
       '<div class="field"><label>Vencimento das férias</label><div class="vencimento-preview" id="vencimentoPreview">'+vencimentoPreview+'</div></div>' +
     '</div>' +
@@ -780,6 +872,7 @@ async function salvarFuncionario(id){
   const salario_familia_valor = salario_familia ? (parseFloat(document.getElementById('fFuncSFValor').value) || 0) : null;
   const salario_familia_cessa = salario_familia ? (document.getElementById('fFuncSFCessa').value || null) : null;
   const obs = document.getElementById('fFuncObs').value.trim();
+  const programacao_ferias = document.getElementById('fFuncProgramacao').value || null;
 
   if(!nome){ toast('Informe o nome do funcionário', false); return; }
   if(!empresa_id){ toast('Selecione a empresa', false); return; }
@@ -811,6 +904,7 @@ async function salvarFuncionario(id){
     periculosidade: periculosidade, historico_salarial: tempHistoricoSalarial,
     salario_familia: salario_familia, salario_familia_valor: salario_familia_valor, salario_familia_cessa: salario_familia_cessa,
     periodo_aquisitivo_inicio: periodoAtual, ferias_vencimento: feriasVencimento,
+    programacao_ferias: programacao_ferias,
     ferias_historico: feriasHistorico, ferias_revisado: feriasRevisado,
     obs: obs
   };
@@ -852,7 +946,7 @@ function gerarLinhasContribuintes(lista){
       '<td>'+formatarMoeda(c.pro_labore)+'</td>' +
       '<td>'+formatarData(c.data_inicio)+'</td>' +
       '<td>'+situacao+'</td>' +
-      '<td class="acao-editor"><button class="btn btn-ghost btn-sm" onclick="abrirModalContribuinte(\''+c.id+'\')"><i class="ti ti-edit"></i></button>' +
+      '<td class="acao-editor no-print"><button class="btn btn-ghost btn-sm" onclick="abrirModalContribuinte(\''+c.id+'\')"><i class="ti ti-edit"></i></button>' +
       '<button class="btn btn-danger btn-sm" onclick="excluirContribuinte(\''+c.id+'\',\''+(c.nome||'').replace(/'/g,'')+'\')"><i class="ti ti-trash"></i></button></td>' +
     '</tr>';
   }).join('') : '<tr><td colspan="6" class="empty-state">Nenhum contribuinte cadastrado ainda.</td></tr>';
@@ -873,15 +967,18 @@ function renderContribuintes(){
       '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:10px;">' +
         '<div><h2><i class="ti ti-briefcase"></i> Contribuintes</h2>' +
         '<div class="desc">Empresários e sócios que recolhem pró-labore.</div></div>' +
+        '<div style="display:flex; gap:8px;">' +
+        '<button class="btn btn-ghost" onclick="window.print()"><i class="ti ti-printer"></i> Imprimir / PDF</button>' +
         '<button class="btn btn-vinho acao-editor" onclick="abrirModalContribuinte()"><i class="ti ti-plus"></i> Novo contribuinte</button>' +
+        '</div>' +
       '</div>' +
-      '<div class="row-flex" style="margin-bottom:14px;">' +
+      '<div class="row-flex no-print" style="margin-bottom:14px;">' +
         '<div class="field" style="max-width:280px;"><label>Buscar por nome</label>' +
         '<input id="buscaContribuinteInput" type="text" value="'+buscaContribuinte+'" placeholder="Digite o nome" oninput="buscaContribuinte=this.value; atualizarTabelaContribuintes();" /></div>' +
         '<div class="field" style="max-width:260px;"><label>Filtrar por empresa</label>' +
         '<select id="empresaFiltroContrib" onchange="filtroEmpresaContribId=this.value; atualizarTabelaContribuintes();"><option value="">Todas as empresas</option>'+opcoesEmpresa+'</select></div>' +
       '</div>' +
-      '<table><thead><tr><th>Nome</th><th>Empresa</th><th>Pró-labore</th><th>Início</th><th>Situação</th><th>Ações</th></tr></thead>' +
+      '<table><thead><tr><th>Nome</th><th>Empresa</th><th>Pró-labore</th><th>Início</th><th>Situação</th><th class="no-print">Ações</th></tr></thead>' +
       '<tbody id="contribTbody">' + linhas + '</tbody></table>' +
     '</div>';
 }
