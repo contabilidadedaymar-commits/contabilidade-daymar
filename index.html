@@ -473,7 +473,6 @@ function renderAlertas(){
       '<div class="kpi hl-yellow"><div class="num">' + alertasFerias.length + '</div><div class="lbl">Férias a revisar</div></div>' +
       '<div class="kpi hl-red"><div class="num">' + alertasSF.length + '</div><div class="lbl">Salário família a revisar</div></div>' +
       '<div class="kpi"><div class="num">' + comSF + '</div><div class="lbl">Recebem salário família</div></div>' +
-      '<div class="kpi"><div class="num">' + formatarMoeda(totalFolha) + '</div><div class="lbl">Total da folha (ativos)</div></div>' +
     '</div>' +
     '<div class="panel"><h2><i class="ti ti-beach"></i> Férias próximas do vencimento</h2>' +
     '<div class="desc">Alerta automático para férias que vencem em até 45 dias, ou já vencidas. Marque como revisado depois de lançar no seu programa contábil.</div>' +
@@ -503,16 +502,19 @@ function listaEmpresasFiltrada(){
 }
 
 function gerarLinhasEmpresas(lista){
-  return lista.length ? lista.map(e=>
-    '<tr class="clickable-row" onclick="abrirFuncionariosDaEmpresa(\'' + e.id + '\')">' +
+  return lista.length ? lista.map(e=>{
+    const folhaEmpresa = funcionarios.filter(f=>f.empresa_id===e.id && f.ativo!==false).reduce((s,f)=>s+(parseFloat(f.salario)||0),0);
+    return '<tr class="clickable-row" onclick="abrirFuncionariosDaEmpresa(\'' + e.id + '\')">' +
       '<td><strong>' + e.nome + '</strong></td>' +
       '<td>' + (e.cnpj || '—') + '</td>' +
       '<td>' + funcionarios.filter(f=>f.empresa_id===e.id).length + '</td>' +
+      '<td>' + formatarMoeda(folhaEmpresa) + '</td>' +
       '<td onclick="event.stopPropagation()" class="acao-editor no-print">' +
         '<button class="btn btn-ghost btn-sm" onclick="abrirModalEmpresa(\'' + e.id + '\')"><i class="ti ti-edit"></i></button>' +
         '<button class="btn btn-danger btn-sm" onclick="excluirEmpresa(\'' + e.id + '\',\'' + (e.nome||'').replace(/'/g,'') + '\')"><i class="ti ti-trash"></i></button>' +
       '</td>' +
-    '</tr>').join('') : '<tr><td colspan="4" class="empty-state">Nenhuma empresa encontrada.</td></tr>';
+    '</tr>';
+  }).join('') : '<tr><td colspan="5" class="empty-state">Nenhuma empresa encontrada.</td></tr>';
 }
 
 function atualizarTabelaEmpresas(){
@@ -537,7 +539,7 @@ function renderEmpresas(){
         '<div class="field" style="max-width:320px;"><label>Buscar por nome</label>' +
         '<input id="buscaEmpresaInput" type="text" value="' + buscaEmpresa + '" placeholder="Digite o nome da empresa" oninput="buscaEmpresa=this.value; atualizarTabelaEmpresas();" /></div>' +
       '</div>' +
-      '<table><thead><tr><th>Nome</th><th>CNPJ</th><th>Funcionários</th><th class="no-print">Ações</th></tr></thead>' +
+      '<table><thead><tr><th>Nome</th><th>CNPJ</th><th>Funcionários</th><th>Total da folha</th><th class="no-print">Ações</th></tr></thead>' +
       '<tbody id="empresaTbody">' + linhas + '</tbody></table>' +
     '</div>';
 }
@@ -681,12 +683,13 @@ function renderFuncionarios(){
   const linhas = gerarLinhasFuncionarios(lista);
   const linhasFerias = gerarLinhasControleFerias(lista);
   const empresaAtual = filtroEmpresaId ? empresaNome(filtroEmpresaId) : '';
+  const folhaLista = lista.filter(f=>f.ativo!==false).reduce((s,f)=>s+(parseFloat(f.salario)||0),0);
 
   return '' +
     '<div class="panel">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:10px;">' +
         '<div><h2><i class="ti ti-users"></i> Funcionários ' + (empresaAtual ? '<span class="badge-inline">'+empresaAtual+'</span>':'') + '</h2>' +
-        '<div class="desc">Cadastro completo: salário, benefícios, situação e férias.</div></div>' +
+        '<div class="desc">Cadastro completo: salário, benefícios, situação e férias &middot; Total da folha (ativos) desta lista: <strong>' + formatarMoeda(folhaLista) + '</strong></div></div>' +
         '<div style="display:flex; gap:8px;">' +
         '<button class="btn btn-ghost" onclick="window.print()"><i class="ti ti-printer"></i> Imprimir / PDF</button>' +
         '<button class="btn btn-vinho acao-editor" onclick="abrirModalFuncionario()"><i class="ti ti-plus"></i> Novo funcionário</button>' +
